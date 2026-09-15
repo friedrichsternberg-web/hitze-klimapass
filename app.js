@@ -272,60 +272,214 @@ function zeichneBauvorhaben() {
 
 
 // ---------------------------------------------------------------
-// 4. Ansicht Bauherr, Teil 2: die Eingabe
+// 4. Ansicht Bauherr, Teil 2: der Fragebogen
+//
+// Der Bauherr beantwortet Fragen zu Freifläche, Dach, Fassade und Regenwasser.
+// Aus den Antworten macht bewertung.js die sieben Kategorienwerte. Der Bogen
+// ist hier als Liste beschrieben, nicht als fertiges HTML: ein Abschnitt hat
+// einen Titel und Fragen, eine Frage hat eine Kennung, einen Namen und eine
+// Art. "sichtbar" ist eine Bedingung, die entscheidet, ob die Frage gerade
+// gestellt wird. So taucht die Frage nach dem Belag nur auf, wenn die Fläche
+// nicht ohnehin ganz grün ist.
 // ---------------------------------------------------------------
 
-// Ein Schieberegler für eine Kategorie. Der Zielwert liegt immer in der Mitte
-// der Bahn: Prozente laufen bis 100 bei einem Ziel von höchstens 70, Kubikmeter
-// und Bäume bis zum doppelten Zielwert.
-function zeichneSchieber(vorhaben, kategorie) {
-  const wert = vorhaben.eingabe[kategorie.kennung];
-  const zielwert = zielwertFuer(vorhaben, kategorie);
-  const groesster = kategorie.einheit === "prozent" ? 100 : zielwert * 2;
+const JA_NEIN = [
+  { wert: true, name: "ja" },
+  { wert: false, name: "nein" }
+];
 
-  return `
-    <div class="regler">
-      <label class="regler-name" for="regler-${kategorie.kennung}">${kategorie.name}</label>
-      <output class="regler-wert" id="wert-${kategorie.kennung}">${beschrifteWert(wert, kategorie.einheit)}</output>
-      <input class="regler-schieber" type="range" id="regler-${kategorie.kennung}"
-             data-feld="${kategorie.kennung}" min="0" max="${groesster}" step="1" value="${wert}">
-    </div>
-  `;
+const FRAGEBOGEN = [
+  {
+    titel: "Freifläche",
+    fragen: [
+      { kennung: "gestaltung", name: "Gestaltung", art: "auswahl", optionen: [
+        { wert: "gruen", name: "ganz grün" },
+        { wert: "ueberwiegend-gruen", name: "überwiegend grün" },
+        { wert: "gemischt", name: "gemischt" },
+        { wert: "ueberwiegend-befestigt", name: "überwiegend befestigt" },
+        { wert: "befestigt", name: "ganz befestigt" }
+      ] },
+      { kennung: "belag", name: "Belag der befestigten Teile", art: "auswahl",
+        sichtbar: function (a) { return a.gestaltung !== "gruen"; },
+        optionen: [
+          { wert: "asphalt", name: "Asphalt oder Beton" },
+          { wert: "pflaster", name: "Pflaster" },
+          { wert: "rasengitter", name: "Rasengitter" },
+          { wert: "kies", name: "Kies" }
+        ] },
+      { kennung: "innenhof", name: "Innenhof", art: "jaNein",
+        hinweis: function (a) { return a.innenhof ? "Bäume im Hof zählen anderthalbfach." : ""; } },
+      { kennung: "baeume", name: "Bäume", art: "zahl",
+        hinweis: function (a, vorhaben) {
+          return "Ziel: " + zielwertFuer(vorhaben, findeKategorie("baeume"))
+            + " bei " + schreibeZahlDeutsch(vorhaben.freiflaeche) + " m² Freifläche.";
+        } },
+      { kennung: "kronengroesse", name: "Kronengröße", art: "auswahl",
+        sichtbar: function (a) { return a.baeume > 0; },
+        optionen: [
+          { wert: "klein", name: "klein" },
+          { wert: "mittel", name: "mittel" },
+          { wert: "gross", name: "groß" }
+        ] },
+      { kennung: "verschattungZusatz", name: "Schatten durch Segel, Pergola, Gebäude", art: "schieber" }
+    ]
+  },
+  {
+    titel: "Dach",
+    fragen: [
+      { kennung: "dachform", name: "Dachform", art: "auswahl", optionen: [
+        { wert: "flach", name: "Flachdach" },
+        { wert: "geneigt", name: "geneigt" }
+      ] },
+      { kennung: "dachbegruenung", name: "Begrünt", art: "schieber",
+        hinweis: function (a) { return a.dachform === "geneigt" ? "Auf geneigtem Dach zählen höchstens 30 %." : ""; } },
+      { kennung: "dachbegruenungArt", name: "Art der Begrünung", art: "auswahl",
+        sichtbar: function (a) { return a.dachbegruenung > 0; },
+        optionen: [
+          { wert: "extensiv", name: "extensiv, dünne Schicht" },
+          { wert: "intensiv", name: "intensiv, Stauden und Sträucher" }
+        ] },
+      { kennung: "dachHell", name: "Helle Oberfläche", art: "jaNein" },
+      { kennung: "retentionsdach", name: "Retentionsdach, hält Regen zurück", art: "jaNein",
+        sichtbar: function (a) { return a.dachform === "flach"; } }
+    ]
+  },
+  {
+    titel: "Fassade",
+    fragen: [
+      { kennung: "fassadenbegruenung", name: "Begrünt", art: "schieber" },
+      { kennung: "fassadenbegruenungArt", name: "Art der Begrünung", art: "auswahl",
+        sichtbar: function (a) { return a.fassadenbegruenung > 0; },
+        optionen: [
+          { wert: "bodengebunden", name: "Kletterpflanzen aus dem Boden" },
+          { wert: "wandgebunden", name: "Wandsystem mit Substrat" }
+        ] },
+      { kennung: "fassadeHell", name: "Helle Fassade", art: "jaNein" }
+    ]
+  },
+  {
+    titel: "Regenwasser",
+    fragen: [
+      { kennung: "zisterne", name: "Zisterne in m³", art: "zahl" },
+      { kennung: "versickerung", name: "Versickerung auf dem Grundstück", art: "jaNein" }
+    ]
+  }
+];
+
+
+// Holt die Antworten eines Bauvorhabens. Bauvorhaben, die vor dem Fragebogen
+// angelegt wurden, haben noch keine und bekommen die leeren.
+function antwortenVon(vorhaben) {
+  if (!vorhaben.antworten) {
+    vorhaben.antworten = leereAntworten();
+  }
+  return vorhaben.antworten;
 }
 
 
-// Helle Materialien haben nur drei Zustände, ein Schieberegler wäre dafür
-// die falsche Form. Stattdessen drei Knöpfe, von denen einer aktiv ist.
-function zeichneStufenwahl(vorhaben, kategorie) {
-  const wert = vorhaben.eingabe[kategorie.kennung];
+// Rechnet die Antworten in die sieben Kategorienwerte um und legt sie am
+// Bauvorhaben ab. Alles Weitere, Ergebnis, Kacheln, Zertifikat, liest von dort.
+function aktualisiereEingabe(vorhaben) {
+  vorhaben.eingabe = leiteEingabeAb(vorhaben, antwortenVon(vorhaben));
+}
 
-  const knoepfe = STUFENNAMEN.map(function (name, stufe) {
-    const istAktiv = stufe === wert;
+
+// Eine Reihe Wahlknöpfe. Für ja/nein und für Listen dieselbe Form, nur die
+// Optionen unterscheiden sich. Der Wert wandert als Text ins Attribut und wird
+// beim Klick wieder in seine Art zurückverwandelt, siehe uebernimmAntwort.
+function zeichneWahlknoepfe(frage, wert) {
+  const optionen = frage.art === "jaNein" ? JA_NEIN : frage.optionen;
+
+  return `<div class="frage-antwort">` + optionen.map(function (option) {
+    const istAktiv = option.wert === wert;
     return `
       <button class="wahl-knopf${istAktiv ? " aktiv" : ""}" type="button"
-              data-feld="${kategorie.kennung}" data-stufe="${stufe}"
-              aria-pressed="${istAktiv}">${name}</button>
+              data-frage="${frage.kennung}" data-wert="${option.wert}"
+              aria-pressed="${istAktiv}">${option.name}</button>
     `;
-  });
+  }).join("") + `</div>`;
+}
+
+
+function zeichneFrage(frage, vorhaben) {
+  const antworten = antwortenVon(vorhaben);
+  if (frage.sichtbar && !frage.sichtbar(antworten)) {
+    return "";
+  }
+
+  const wert = antworten[frage.kennung];
+  const hinweis = frage.hinweis ? frage.hinweis(antworten, vorhaben) : "";
+  let wertanzeige = "";
+  let steuerung = "";
+
+  if (frage.art === "schieber") {
+    wertanzeige = `<output class="frage-wert" id="wert-${frage.kennung}">${wert} %</output>`;
+    steuerung = `<input class="frage-schieber" type="range" data-frage="${frage.kennung}"
+                        min="0" max="100" step="5" value="${wert}">`;
+  } else if (frage.art === "zahl") {
+    steuerung = `<input class="frage-zahl" type="number" data-frage="${frage.kennung}"
+                        min="0" step="1" value="${wert}">`;
+  } else {
+    steuerung = zeichneWahlknoepfe(frage, wert);
+  }
 
   return `
-    <div class="regler">
-      <p class="regler-name">${kategorie.name}</p>
-      <div class="stufenwahl">${knoepfe.join("")}</div>
+    <div class="frage">
+      <p class="frage-name">${frage.name}</p>
+      ${wertanzeige}
+      ${steuerung}
+      ${hinweis ? `<p class="frage-hinweis">${hinweis}</p>` : ""}
     </div>
   `;
 }
 
 
 function zeichneEingabe(vorhaben) {
-  const zeilen = KATEGORIEN.map(function (kategorie) {
-    if (kategorie.einheit === "stufe") {
-      return zeichneStufenwahl(vorhaben, kategorie);
-    }
-    return zeichneSchieber(vorhaben, kategorie);
+  const abschnitte = FRAGEBOGEN.map(function (abschnitt) {
+    const fragen = abschnitt.fragen.map(function (frage) {
+      return zeichneFrage(frage, vorhaben);
+    });
+    return `
+      <section class="abschnitt">
+        <h3 class="abschnitt-titel">${abschnitt.titel}</h3>
+        ${fragen.join("")}
+      </section>
+    `;
   });
 
-  document.getElementById("eingabefeld").innerHTML = zeilen.join("");
+  document.getElementById("eingabefeld").innerHTML = abschnitte.join("");
+}
+
+
+// Sucht die Beschreibung einer Frage anhand ihrer Kennung.
+function findeFrage(kennung) {
+  for (const abschnitt of FRAGEBOGEN) {
+    const treffer = abschnitt.fragen.find(function (frage) {
+      return frage.kennung === kennung;
+    });
+    if (treffer) {
+      return treffer;
+    }
+  }
+  return null;
+}
+
+
+// Ein Wert aus einem Attribut ist immer Text. Hier wird er in das
+// zurückverwandelt, was die Frage meint: eine Zahl, ein ja/nein oder ein Wort.
+function uebernimmAntwort(kennung, rohwert) {
+  const frage = findeFrage(kennung);
+  const antworten = antwortenVon(aktuellesVorhaben);
+
+  if (frage.art === "jaNein") {
+    antworten[kennung] = rohwert === "true";
+  } else if (frage.art === "schieber" || frage.art === "zahl") {
+    antworten[kennung] = Math.max(0, Number(rohwert) || 0);
+  } else {
+    antworten[kennung] = rohwert;
+  }
+
+  aktualisiereEingabe(aktuellesVorhaben);
 }
 
 
@@ -417,6 +571,7 @@ function oeffneDetail(vorhabenKennung) {
     (aktuellesVorhaben.adresse ? aktuellesVorhaben.adresse + ", " : "")
     + bezirksangabe + (artname ? ", " + artname : "");
 
+  aktualisiereEingabe(aktuellesVorhaben);
   zeichneEingabe(aktuellesVorhaben);
   zeichneErgebnis(aktuellesVorhaben);
   zeigeAnsicht("detail");
@@ -446,33 +601,41 @@ function verbindeKachelliste() {
 function verbindeDetail() {
   const eingabefeld = document.getElementById("eingabefeld");
 
-  // Beim Ziehen eines Reglers: Wert übernehmen, Beschriftung nachziehen,
-  // Ergebnis neu rechnen. Nur die rechte Spalte wird neu gezeichnet, sonst
-  // würde der Regler unter dem Finger verschwinden.
+  // Beim Ziehen eines Reglers oder Tippen in ein Zahlenfeld: Antwort
+  // übernehmen, Beschriftung nachziehen, Ergebnis neu rechnen. Der Bogen selbst
+  // wird dabei NICHT neu gezeichnet, sonst verschwände der Regler unter dem
+  // Finger.
   eingabefeld.addEventListener("input", function (ereignis) {
-    const feldName = ereignis.target.dataset.feld;
-    if (!feldName) {
+    const kennung = ereignis.target.dataset.frage;
+    if (!kennung) {
       return;
     }
-    const neuerWert = Number(ereignis.target.value);
-    aktuellesVorhaben.eingabe[feldName] = neuerWert;
-
-    const kategorie = findeKategorie(feldName);
-    document.getElementById("wert-" + feldName).textContent =
-      beschrifteWert(neuerWert, kategorie.einheit);
-
+    uebernimmAntwort(kennung, ereignis.target.value);
+    const wertanzeige = document.getElementById("wert-" + kennung);
+    if (wertanzeige) {
+      wertanzeige.textContent = antwortenVon(aktuellesVorhaben)[kennung] + " %";
+    }
     zeichneErgebnis(aktuellesVorhaben);
     sichereStand();
   });
 
-  // Bei der Stufenwahl darf die linke Spalte neu gezeichnet werden, weil ein
-  // Klick anders als ein Ziehen abgeschlossen ist.
+  // Ist das Ziehen oder Tippen abgeschlossen, wird der Bogen neu gezeichnet.
+  // Erst jetzt, weil davon abhängen kann, welche Folgefragen erscheinen: die
+  // Kronengröße etwa erst, wenn es überhaupt Bäume gibt.
+  eingabefeld.addEventListener("change", function (ereignis) {
+    if (ereignis.target.dataset.frage) {
+      zeichneEingabe(aktuellesVorhaben);
+    }
+  });
+
+  // Ein Klick auf einen Wahlknopf ist abgeschlossen, hier darf sofort alles
+  // neu gezeichnet werden.
   eingabefeld.addEventListener("click", function (ereignis) {
     const knopf = ereignis.target.closest(".wahl-knopf");
-    if (!knopf) {
+    if (!knopf || !knopf.dataset.frage) {
       return;
     }
-    aktuellesVorhaben.eingabe[knopf.dataset.feld] = Number(knopf.dataset.stufe);
+    uebernimmAntwort(knopf.dataset.frage, knopf.dataset.wert);
     zeichneEingabe(aktuellesVorhaben);
     zeichneErgebnis(aktuellesVorhaben);
     sichereStand();
@@ -762,6 +925,9 @@ function verbindePass() {
 // Ohne Suche steht hier null, und das Anlegen wird beanstandet.
 let gefundenerBezirkFuerNeubau = null;
 
+// Antworten, die das Beispiel mitbringt. Bei einem leeren Formular null.
+let antwortenFuerNeubau = null;
+
 
 // Fragt adresse.js nach dem Bezirk und schreibt das Ergebnis in die Oberfläche.
 // Beide Formulare, das für Bauvorhaben und das für Meldungen, benutzen diese
@@ -866,6 +1032,7 @@ function oeffneNeuformular() {
     freiflaeche: ""
   });
   gefundenerBezirkFuerNeubau = null;
+  antwortenFuerNeubau = null;
   document.getElementById("neuFundstelle").textContent = "";
   zeigeBeanstandungen([]);
   zeigeAnsicht("neu");
@@ -885,15 +1052,11 @@ function legeBauvorhabenAn() {
   }
 
   entwurf.kennung = "eigenes-" + Date.now();
-  entwurf.eingabe = {
-    unversiegelt: 0,
-    dachbegruenung: 0,
-    fassadenbegruenung: 0,
-    verschattung: 0,
-    helleMaterialien: 0,
-    regenrueckhalt: 0,
-    baeume: 0
-  };
+  // Ein neues Vorhaben startet mit den leeren Antworten, es sei denn, das
+  // Beispiel wurde eingesetzt und bringt seine eigenen mit.
+  entwurf.antworten = antwortenFuerNeubau || leereAntworten();
+  antwortenFuerNeubau = null;
+  aktualisiereEingabe(entwurf);
 
   bauvorhaben.push(entwurf);
   sichereStand();
@@ -914,6 +1077,7 @@ function verbindeNeuformular() {
     // weiterzureichen. Sonst würde ein zweites Anlegen die Vorlage in daten.js
     // überschreiben.
     schreibeEntwurf(Object.assign({}, beispielBauvorhaben));
+    antwortenFuerNeubau = Object.assign({}, beispielBauvorhaben.antworten);
     zeigeBeanstandungen([]);
     // Die Adresse des Beispiels wird gleich mitgesucht, sonst müsste man nach
     // dem Einsetzen noch von Hand auf "Bezirk suchen" klicken.
@@ -1249,6 +1413,9 @@ function zeichneBuergerdashboard() {
 function ladeStand() {
   const gespeichert = ladeGespeichertes();
   gespeichert.bauvorhaben.forEach(function (vorhaben) {
+    // Bauvorhaben aus der Zeit vor dem Fragebogen haben nur die sieben
+    // Reglerwerte. Sie bekommen leere Antworten und werden neu gerechnet.
+    aktualisiereEingabe(vorhaben);
     bauvorhaben.push(vorhaben);
   });
   gespeichert.meldungen.forEach(function (meldung) {

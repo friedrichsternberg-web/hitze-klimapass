@@ -117,6 +117,9 @@
   --groesse-siegel: 3rem;
   --breite-passbalken: 5rem;
   --mindestbreite-passtabelle: 26rem;
+
+  /* Breite eines Zahlenfelds im Fragebogen, etwa für Kubikmeter oder Stück. */
+  --breite-zahlfeld: 6rem;
   --mindestbreite-kennzahl: 11rem;
 
   /* Schatten. Bisher hatte die Seite gar keine, alles lag flach auf einer
@@ -1159,4 +1162,50 @@ body {
     transition: none;
   }
 
+}
+
+
+/* ---------------------------------------------------------------
+ * 22. Der Fragebogen
+ *
+ * Ein Abschnitt je Bauteil, darin eine Frage je Zeile. Die Antwortknöpfe sind
+ * die bekannten Wahlknöpfe. Zwischen den Abschnitten trennt eine Haarlinie.
+ * --------------------------------------------------------------- */
+
+.abschnitt-titel {
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-voll);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--farbe-akzent);
+  border-bottom: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+.frage-name {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.frage-wert {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-voll);
+  color: var(--farbe-akzent);
+}
+
+.frage-zahl {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  font-family: var(--schrift);
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+  text-align: right;
+}
+
+/* Ein Hinweis, der nur bei einer bestimmten Antwort erscheint, etwa dass
+   ein geneigtes Dach die Begrünung begrenzt. */
+.frage-hinweis {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
 }

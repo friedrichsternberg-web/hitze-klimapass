@@ -955,3 +955,61 @@ body {
   margin: 0;
   max-width: var(--breite-formular);
 }
+
+
+/* ---------------------------------------------------------------
+ * 20. Der Fragebogen
+ * --------------------------------------------------------------- */
+
+.abschnitt {
+  margin-bottom: var(--abstand-l);
+}
+
+.abschnitt-titel {
+  margin: 0 0 var(--abstand-m) 0;
+  padding-bottom: var(--abstand-xs);
+}
+
+/* Jede Frage ist ein kleines Gitter: links der Name, rechts der Wert, darunter
+   die Antwort über die ganze Breite. Dasselbe Muster wie bei den Reglern. */
+.frage {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: var(--abstand-xs) var(--abstand-s);
+  margin-bottom: var(--abstand-m);
+}
+
+.frage-name {
+  margin: 0;
+}
+
+.frage-wert {
+  margin: 0;
+}
+
+.frage-antwort {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+}
+
+.frage-schieber {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+}
+
+.frage-zahl {
+  grid-column: 2;
+  width: var(--breite-zahlfeld);
+  padding: var(--abstand-xs) var(--abstand-s);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.frage-hinweis {
+  grid-column: 1 / -1;
+  margin: 0;
+}

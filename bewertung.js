@@ -16,6 +16,177 @@
 
 
 // ---------------------------------------------------------------
+// 0. Vom Fragebogen zu den sieben Kategorien
+//
+// Der Bauherr füllt keinen Regler je Kategorie mehr aus, sondern einen
+// Fragebogen: Wie ist die Freifläche gestaltet, gibt es einen Innenhof, wie
+// viele Bäume, welche Dachform, und so weiter. Die Funktionen hier rechnen
+// diese Antworten in die sieben Kategorienwerte um, mit denen die Punkte-
+// rechnung darunter weiterarbeitet. Die Punkterechnung selbst bleibt dadurch
+// unverändert und prüfbar.
+//
+// Die Faktoren sind gesetzte Annahmen für die Demo, keine Messwerte.
+// ---------------------------------------------------------------
+
+// Wie viel der Freifläche unversiegelt ist, je nach Gestaltung.
+const GRUENANTEIL = {
+  "gruen": 1,
+  "ueberwiegend-gruen": 0.75,
+  "gemischt": 0.5,
+  "ueberwiegend-befestigt": 0.25,
+  "befestigt": 0
+};
+
+// Wie viel Wasser der Belag der befestigten Teile noch durchlässt.
+// Asphalt gar nichts, Rasengitter die Hälfte, Kies fast alles.
+const BELAGDURCHLASS = {
+  "asphalt": 0,
+  "pflaster": 0.15,
+  "rasengitter": 0.5,
+  "kies": 0.7
+};
+
+// Welche Beläge als hell gelten. Asphalt ist der einzige dunkle.
+const BELAGHELL = {
+  "asphalt": false,
+  "pflaster": true,
+  "rasengitter": true,
+  "kies": true
+};
+
+// Wie viel Fläche die Krone eines Baumes beschattet, in Quadratmetern.
+const KRONENFLAECHE = {
+  "klein": 15,
+  "mittel": 35,
+  "gross": 70
+};
+
+// Ein Innenhof hält Schatten und kühle Luft. Bäume darin zählen deshalb
+// mehr als Bäume auf einer offenen Fläche.
+const INNENHOFFAKTOR = 1.5;
+
+// Auf einem geneigten Dach lässt sich höchstens dieser Anteil begrünen.
+const HOECHSTBEGRUENUNG_GENEIGT = 30;
+
+// Ein Retentionsdach hält etwa 30 Liter je Quadratmeter, eine Versickerungs-
+// mulde etwa 20 Liter je Quadratmeter unversiegelter Freifläche.
+const RUECKHALT_RETENTIONSDACH = 0.03;
+const RUECKHALT_VERSICKERUNG = 0.02;
+
+
+// Die Antworten, mit denen ein neues Bauvorhaben startet: die schlechteste
+// Ausstattung. Dadurch ist ein neues Vorhaben rot und zeigt sofort, was fehlt.
+function leereAntworten() {
+  return {
+    gestaltung: "befestigt",
+    belag: "asphalt",
+    innenhof: false,
+    baeume: 0,
+    kronengroesse: "mittel",
+    verschattungZusatz: 0,
+    dachform: "flach",
+    dachbegruenung: 0,
+    dachbegruenungArt: "extensiv",
+    dachHell: false,
+    retentionsdach: false,
+    fassadenbegruenung: 0,
+    fassadenbegruenungArt: "bodengebunden",
+    fassadeHell: false,
+    zisterne: 0,
+    versickerung: false
+  };
+}
+
+
+// Die unversiegelte Freifläche in Quadratmetern. Der begrünte Teil zählt ganz,
+// vom befestigten Teil zählt, was der Belag durchlässt.
+function unversiegelteFreiflaeche(vorhaben, antworten) {
+  const gruen = GRUENANTEIL[antworten.gestaltung] || 0;
+  const durchlass = BELAGDURCHLASS[antworten.belag] || 0;
+  return vorhaben.freiflaeche * (gruen + (1 - gruen) * durchlass);
+}
+
+
+// Wie viel Prozent der Freifläche im Schatten liegen: Baumkronen plus das,
+// was Pergola, Segel oder Nachbargebäude zusätzlich beschatten.
+function verschattungAusAntworten(vorhaben, antworten) {
+  const krone = KRONENFLAECHE[antworten.kronengroesse] || 0;
+  let schattenflaeche = antworten.baeume * krone;
+  if (antworten.innenhof) {
+    schattenflaeche = schattenflaeche * INNENHOFFAKTOR;
+  }
+  const durchBaeume = vorhaben.freiflaeche > 0
+    ? schattenflaeche / vorhaben.freiflaeche * 100
+    : 0;
+  return Math.min(100, durchBaeume + antworten.verschattungZusatz);
+}
+
+
+// Helle Materialien als Stufe 0 bis 2, gezählt aus Dach, Fassade und Belag.
+function helleMaterialienAusAntworten(antworten) {
+  let helle = 0;
+  if (antworten.dachHell) helle = helle + 1;
+  if (antworten.fassadeHell) helle = helle + 1;
+  if (BELAGHELL[antworten.belag]) helle = helle + 1;
+  if (helle === 0) return 0;
+  if (helle === 3) return 2;
+  return 1;
+}
+
+
+// Regenrückhalt in Kubikmetern: Zisterne plus Retentionsdach plus Versickerung.
+function regenrueckhaltAusAntworten(vorhaben, antworten) {
+  let rueckhalt = antworten.zisterne;
+  if (antworten.retentionsdach && antworten.dachform === "flach") {
+    rueckhalt = rueckhalt + vorhaben.dachflaeche * RUECKHALT_RETENTIONSDACH;
+  }
+  if (antworten.versickerung) {
+    rueckhalt = rueckhalt + unversiegelteFreiflaeche(vorhaben, antworten) * RUECKHALT_VERSICKERUNG;
+  }
+  return Math.round(rueckhalt);
+}
+
+
+// Der Kern: aus allen Antworten die sieben Kategorienwerte.
+function leiteEingabeAb(vorhaben, antworten) {
+  const unversiegelt = vorhaben.grundstuecksflaeche > 0
+    ? unversiegelteFreiflaeche(vorhaben, antworten) / vorhaben.grundstuecksflaeche * 100
+    : 0;
+
+  // Auf einem geneigten Dach ist die Begrünung gedeckelt. Intensive Begrünung
+  // mit Substrat und Stauden kühlt stärker als ein dünner Sedumteppich.
+  let dach = antworten.dachbegruenung;
+  if (antworten.dachform === "geneigt") {
+    dach = Math.min(dach, HOECHSTBEGRUENUNG_GENEIGT);
+  }
+  if (antworten.dachbegruenungArt === "intensiv") {
+    dach = Math.min(100, dach * 1.2);
+  }
+
+  // Wandgebundene Systeme decken die Fläche dichter als Kletterpflanzen.
+  let fassade = antworten.fassadenbegruenung;
+  if (antworten.fassadenbegruenungArt === "wandgebunden") {
+    fassade = Math.min(100, fassade * 1.1);
+  }
+
+  // Bäume im Innenhof zählen mehr, siehe INNENHOFFAKTOR.
+  const baeume = antworten.innenhof
+    ? antworten.baeume * INNENHOFFAKTOR
+    : antworten.baeume;
+
+  return {
+    unversiegelt: Math.round(unversiegelt),
+    dachbegruenung: Math.round(dach),
+    fassadenbegruenung: Math.round(fassade),
+    verschattung: Math.round(verschattungAusAntworten(vorhaben, antworten)),
+    helleMaterialien: helleMaterialienAusAntworten(antworten),
+    regenrueckhalt: regenrueckhaltAusAntworten(vorhaben, antworten),
+    baeume: baeume
+  };
+}
+
+
+// ---------------------------------------------------------------
 // 1. Die sieben Kategorien
 //
 // "maximalPunkte" der sieben Zeilen ergibt zusammen genau 100.
@@ -55,9 +226,11 @@ function zielwertFuer(vorhaben, kategorie) {
     return Math.ceil(vorhaben.grundstuecksflaeche / 100 * 3);
   }
   if (kategorie.kennung === "baeume") {
-    // 2 Bäume je 500 Quadratmeter Grundstück. Aufgerundet, weil man keine
-    // 0,8 Bäume pflanzen kann.
-    return Math.ceil(vorhaben.grundstuecksflaeche / 500 * 2);
+    // Ein Baum je 100 Quadratmeter Freifläche. Seit dem 15.09.2026 an der
+    // Freifläche statt am Grundstück, weil nur dort Bäume stehen können.
+    // Aufgerundet, weil man keine 0,8 Bäume pflanzen kann. Mindestens einer,
+    // sonst hätte ein sehr kleines Grundstück ein Ziel von null.
+    return Math.max(1, Math.ceil(vorhaben.freiflaeche / 100));
   }
   return kategorie.zielwert;
 }

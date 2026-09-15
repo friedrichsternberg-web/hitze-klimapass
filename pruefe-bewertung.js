@@ -20,7 +20,7 @@ load("bewertung.js");
 //
 // Die Zahlen sind glatt gewählt, damit man die erwarteten Ergebnisse im Kopf
 // nachrechnen kann: Ziel Regenrückhalt 3000/100·3 = 90 m³, Ziel Bäume
-// 3000/500·2 = 12 Stück.
+// ein Baum je 100 m² Freifläche, also 1200/100 = 12 Stück.
 // ---------------------------------------------------------------
 
 function testVorhaben(eingabe) {
@@ -243,6 +243,59 @@ pruefe("Bezirk mit den meisten Meldungen", "Testbezirk", ueberblick.spitzenreite
 // ein Name, obwohl niemand etwas gemeldet hat.
 const ohneMeldung = ueberblickFuerBuerger(dreiBezirke, zweiVorhaben, []);
 pruefe("kein Spitzenreiter ohne Meldung", null, ohneMeldung.spitzenreiter);
+
+
+print("");
+print("Vom Fragebogen zu den Kategorien");
+
+const bau = testVorhaben({});
+
+// Die schlechteste Ausstattung muss überall null ergeben.
+const schlecht = leiteEingabeAb(bau, leereAntworten());
+pruefe("alles befestigt, keine Bäume: unversiegelt", 0, schlecht.unversiegelt);
+pruefe("alles befestigt, keine Bäume: Verschattung", 0, schlecht.verschattung);
+pruefe("alles befestigt, keine Bäume: helle Materialien", 0, schlecht.helleMaterialien);
+pruefe("alles befestigt, keine Bäume: Regenrückhalt", 0, schlecht.regenrueckhalt);
+pruefe("alles befestigt, keine Bäume: Gesamtpunkte", 0,
+  bewerte(Object.assign({}, bau, { eingabe: schlecht })).gesamtPunkte);
+
+// Volle Ausstattung: 1200 m² grüne Freifläche von 3000 m² Grundstück sind
+// 40 % unversiegelt, mehr geht auf diesem Grundstück nicht.
+const beste = Object.assign(leereAntworten(), {
+  gestaltung: "gruen", belag: "kies", innenhof: true, baeume: 12,
+  kronengroesse: "gross", dachbegruenung: 100, dachbegruenungArt: "intensiv",
+  dachHell: true, retentionsdach: true, fassadenbegruenung: 100,
+  fassadenbegruenungArt: "wandgebunden", fassadeHell: true, zisterne: 100,
+  versickerung: true
+});
+const gut = leiteEingabeAb(bau, beste);
+pruefe("ganz grüne Freifläche: unversiegelt in Prozent des Grundstücks", 40, gut.unversiegelt);
+pruefe("Verschattung gedeckelt bei 100", 100, gut.verschattung);
+pruefe("Dach, Fassade, Belag hell: Stufe 2", 2, gut.helleMaterialien);
+pruefe("zwölf Bäume im Innenhof zählen wie achtzehn", 18, gut.baeume);
+pruefe("Zisterne plus Retentionsdach plus Versickerung", 100 + 30 + 24, gut.regenrueckhalt);
+
+// Der Innenhof macht den Unterschied bei gleicher Baumzahl.
+const ohneHof = leiteEingabeAb(bau, Object.assign(leereAntworten(), { baeume: 4, kronengroesse: "mittel" }));
+const mitHof = leiteEingabeAb(bau, Object.assign(leereAntworten(), { baeume: 4, kronengroesse: "mittel", innenhof: true }));
+pruefe("vier Bäume ohne Hof", 4, ohneHof.baeume);
+pruefe("vier Bäume mit Hof", 6, mitHof.baeume);
+pruefe("Schatten von vier mittleren Bäumen auf 1200 m²", 12, ohneHof.verschattung);
+pruefe("derselbe Schatten im Innenhof", 18, mitHof.verschattung);
+
+// Geneigtes Dach: mehr als 30 Prozent Begrünung zählen nicht.
+const steil = leiteEingabeAb(bau, Object.assign(leereAntworten(), { dachform: "geneigt", dachbegruenung: 80 }));
+pruefe("geneigtes Dach deckelt die Begrünung", 30, steil.dachbegruenung);
+
+// Rasengitter statt Asphalt macht aus einer befestigten Fläche eine halb
+// durchlässige. 1200 m² Freifläche mal 0,5 sind 600 m², also 20 % vom Grundstück.
+const gitter = leiteEingabeAb(bau, Object.assign(leereAntworten(), { belag: "rasengitter" }));
+pruefe("Rasengitter auf befestigter Fläche", 20, gitter.unversiegelt);
+
+// Das Baumziel richtet sich nach der Freifläche, nicht nach dem Grundstück.
+pruefe("Baumziel bei 1200 m² Freifläche", 12, zielwertFuer(bau, findeKategorie("baeume")));
+pruefe("Baumziel bei winziger Freifläche mindestens eins", 1,
+  zielwertFuer(Object.assign({}, bau, { freiflaeche: 40 }), findeKategorie("baeume")));
 
 
 // ---------------------------------------------------------------

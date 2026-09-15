@@ -190,5 +190,28 @@ const beispielBauvorhaben = {
   grundstuecksflaeche: 2400,
   dachflaeche: 1100,
   fassadenflaeche: 3100,
-  freiflaeche: 950
+  freiflaeche: 950,
+  // Ein typischer Berliner Wohnblock mit Innenhof: halb grün, halb gepflastert,
+  // vier Bäume, Flachdach ohne Begrünung, keine Zisterne. Das ergibt etwa 25
+  // Punkte und ist damit deutlich rot. In der Vorführung ist das gewollt: so
+  // steht die Maßnahmenliste sofort da, und man sieht am Bogen, welche
+  // Antworten das Ergebnis heben.
+  antworten: {
+    gestaltung: "gemischt",
+    belag: "pflaster",
+    innenhof: true,
+    baeume: 4,
+    kronengroesse: "mittel",
+    verschattungZusatz: 10,
+    dachform: "flach",
+    dachbegruenung: 0,
+    dachbegruenungArt: "extensiv",
+    dachHell: false,
+    retentionsdach: false,
+    fassadenbegruenung: 0,
+    fassadenbegruenungArt: "bodengebunden",
+    fassadeHell: true,
+    zisterne: 0,
+    versickerung: false
+  }
 };
