@@ -153,6 +153,8 @@
   --hoehe-skyline: 7rem;
   --hoehe-boden: 3rem;
   --groesse-titelblatt: 1em;
+  --mindestbreite-rollenkarte: 14rem;
+  --mindestbreite-schwelle: 9rem;
 
   /* Farben der Gebäudeskizze. Gedeckt, damit sie neben der Ampel nicht
      laut wird. Die helle Wand und das helle Dach sind die Antwort auf
@@ -1450,4 +1452,128 @@ body {
 .titelblatt {
   color: var(--farbe-akzent);
   fill: currentColor;
+}
+
+
+/* ---------------------------------------------------------------
+ * 27. Der Konzept-Bereich
+ * --------------------------------------------------------------- */
+
+.konzept-zeichen {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+/* Die Leitidee ist der größte Satz der Seite nach dem Titel. */
+.konzept-satz {
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+  font-weight: var(--fett-voll);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.schritte {
+  list-style: none;
+  counter-reset: schritt;
+}
+
+.schritt {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.schritt-zeichen {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+/* Die Nummer des Schritts kommt aus einem CSS-Zähler, nicht aus dem Text. */
+.schritt::before {
+  counter-increment: schritt;
+  content: counter(schritt);
+  color: var(--farbe-text-leise);
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-voll);
+}
+
+.kategorienliste {
+  list-style: none;
+}
+
+.kategorie {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  font-size: var(--schrift-klein);
+}
+
+.kategorie-punkte {
+  font-weight: var(--fett-voll);
+  color: var(--farbe-akzent);
+}
+
+.schwelle {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+  text-align: center;
+}
+
+.schwelle-zahl {
+  font-size: var(--schrift-riesig);
+  font-weight: var(--fett-voll);
+  line-height: 1;
+  color: var(--farbe-akzent);
+}
+
+.schwelle-name {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+.konzept-hinweis {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.rollenkarte {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.rollen-zeichen {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+.rollen-name {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+}
+
+.rollen-text {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.geldliste {
+  list-style: none;
+}
+
+.geldpunkt {
+  font-size: var(--schrift-klein);
+  border-left: var(--breite-ampelstreifen) solid var(--farbe-akzent);
+}
+
+.konzept-ehrlich {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  border-top: var(--linie-staerke) solid var(--farbe-linie);
 }

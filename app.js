@@ -62,8 +62,11 @@ function zeigeRolle(gewaehlteRolle) {
 // Verwaltung vorher ausgeblendet. Der Bereich und sein gesamter Code bleiben
 // bestehen, sie sind nur nicht erreichbar. Ein true holt alles zurück.
 function verbindeUmschalter() {
+  // Der Knopf wird aus der Seite entfernt, nicht nur versteckt. Ein hidden
+  // reicht hier nicht mehr, seit die Knöpfe ein eigenes display haben, und
+  // genau das hatte den Knopf einmal wieder sichtbar gemacht.
   if (!verwaltungAktiv) {
-    document.querySelector("[data-rolle='verwaltung']").hidden = true;
+    document.querySelector("[data-rolle='verwaltung']").remove();
   }
 
   document.querySelectorAll(".umschalter-knopf").forEach(function (knopf) {
@@ -1494,7 +1497,43 @@ function zeichneBuergerdashboard() {
 
 
 // ---------------------------------------------------------------
-// 13. Start
+// 13. Der Konzept-Bereich
+//
+// Der Text steht in index.html. Hier kommen nur die Zahlen dazu, und zwar
+// aus bewertung.js und daten.js. Ändert sich dort ein Gewicht oder eine
+// Schwelle, stimmt das Konzept von allein wieder.
+// ---------------------------------------------------------------
+
+function zeichneKonzept() {
+  document.getElementById("konzeptKategorien").innerHTML = KATEGORIEN.map(function (kategorie) {
+    const symbol = KATEGORIESYMBOLE[kategorie.kennung] || "symbol-blatt";
+    return `
+      <li class="kategorie">
+        <svg class="symbol" aria-hidden="true"><use href="#${symbol}"></use></svg>
+        <span class="kategorie-name">${kategorie.name}</span>
+        <span class="kategorie-punkte">${kategorie.maximalPunkte}</span>
+      </li>
+    `;
+  }).join("");
+
+  document.getElementById("konzeptSchwellen").innerHTML = lagen.map(function (lage) {
+    return `
+      <div class="schwelle">
+        <span class="schwelle-zahl">${schwelleFuer(lage.kennung)}</span>
+        <span class="schwelle-name">${lage.name}</span>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("konzeptEhrlich").textContent =
+    "Echt sind die zwölf Bezirke und die Adressen. Gesetzte Annahmen sind die Gewichte, "
+    + "die Schwellen und die " + massnahmenKatalog.length + " Maßnahmen im Katalog mit ihren "
+    + "Kosten. Für ein Produkt kämen die Zahlen aus der Stadtklimaanalyse des Senats.";
+}
+
+
+// ---------------------------------------------------------------
+// 14. Start
 // ---------------------------------------------------------------
 
 // Holt zurück, was beim letzten Besuch gespeichert wurde.
@@ -1584,6 +1623,7 @@ function starte() {
   zeichneBuergerdashboard();
   verbindeZuruecksetzen();
   verbindeLoeschen();
+  zeichneKonzept();
   // Bauherr ist beim Laden aktiv, weil das der zahlende Kunde ist und die
   // Ansicht, die in der Vorführung zuerst gezeigt wird.
   zeigeRolle("bauherr");

@@ -227,6 +227,9 @@
     <button class="umschalter-knopf" type="button" data-rolle="buerger" aria-pressed="false">
       <svg class="symbol" aria-hidden="true"><use href="#symbol-meldung"></use></svg>Bürger:in
     </button>
+    <button class="umschalter-knopf" type="button" data-rolle="konzept" aria-pressed="false">
+      <svg class="symbol" aria-hidden="true"><use href="#symbol-marke"></use></svg>Konzept
+    </button>
   </nav>
 
   <main class="buehne">
@@ -481,6 +484,88 @@
         <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>Geprüfte Gebäude</h2>
         <div class="kachelfeld" id="gepruefteGebaeude"></div>
       </div>
+
+    </section>
+
+    <!-- Bereich Konzept. Erklärt in wenigen Sätzen, was der Klimapass ist und
+         wie er rechnet. Alle Zahlen darin trägt app.js aus bewertung.js und
+         daten.js ein, damit hier nie etwas anderes steht als in der Rechnung. -->
+    <section class="bereich" data-bereich="konzept" hidden>
+
+      <div class="konzept-leitidee">
+        <svg class="konzept-zeichen" aria-hidden="true"><use href="#symbol-marke"></use></svg>
+        <p class="konzept-satz">Jeder Neubau in Berlin wird geprüft, was er gegen Hitze tut.
+          Vor dem Bau, nicht danach.</p>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>So läuft es</h2>
+        <ol class="schritte">
+          <li class="schritt">
+            <svg class="schritt-zeichen" aria-hidden="true"><use href="#symbol-ort"></use></svg>
+            <span class="schritt-text">Bauvorhaben anlegen, Adresse wird zum Bezirk</span>
+          </li>
+          <li class="schritt">
+            <svg class="schritt-zeichen" aria-hidden="true"><use href="#symbol-blatt"></use></svg>
+            <span class="schritt-text">Fragebogen ausfüllen, die Skizze wächst mit</span>
+          </li>
+          <li class="schritt">
+            <svg class="schritt-zeichen" aria-hidden="true"><use href="#symbol-thermometer"></use></svg>
+            <span class="schritt-text">Punkte, Ampel und Maßnahmen, sofort</span>
+          </li>
+          <li class="schritt">
+            <svg class="schritt-zeichen" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>
+            <span class="schritt-text">Antrag abgeben, Zertifikat erhalten</span>
+          </li>
+        </ol>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>Sieben Kategorien, 100 Punkte</h2>
+        <ul class="kategorienliste" id="konzeptKategorien"></ul>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>Pflicht je nach Lage</h2>
+        <div class="schwellenreihe" id="konzeptSchwellen"></div>
+        <p class="konzept-hinweis">Wo die Stadt am dichtesten ist, ist die Hitze am größten.
+          Dort muss ein Neubau mehr leisten.</p>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>Wer was davon hat</h2>
+        <div class="rollenreihe">
+          <div class="rollenkarte">
+            <svg class="rollen-zeichen" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>
+            <p class="rollen-name">Bauherr</p>
+            <p class="rollen-text">Weiß vor dem Bau, was gefordert ist und was es kostet.
+              Bekommt ein Zertifikat, das er vorzeigen kann.</p>
+          </div>
+          <div class="rollenkarte">
+            <svg class="rollen-zeichen" aria-hidden="true"><use href="#symbol-meldung"></use></svg>
+            <p class="rollen-name">Bürger:in</p>
+            <p class="rollen-text">Meldet Hitze im eigenen Kiez und sieht, wie die Neubauten
+              dort abschneiden.</p>
+          </div>
+          <div class="rollenkarte">
+            <svg class="rollen-zeichen" aria-hidden="true"><use href="#symbol-thermometer"></use></svg>
+            <p class="rollen-name">Stadt</p>
+            <p class="rollen-text">Bekommt Hitze verhindert statt bekämpft, und eine Karte,
+              wo es am meisten drückt.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel"><svg class="titelblatt" aria-hidden="true"><use href="#symbol-blatt"></use></svg>Wovon es lebt</h2>
+        <ul class="geldliste">
+          <li class="geldpunkt">Gebühr je geprüftem Bauvorhaben, getragen vom Bauherrn</li>
+          <li class="geldpunkt">Abo je Bezirk für Prüfung und Karte</li>
+          <li class="geldpunkt">Vermittlung der Maßnahmen an Fachbetriebe</li>
+        </ul>
+      </div>
+
+      <p class="konzept-ehrlich" id="konzeptEhrlich"></p>
 
     </section>
 

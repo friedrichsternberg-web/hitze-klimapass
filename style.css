@@ -1175,3 +1175,136 @@ body {
   height: var(--hoehe-boden);
   margin: var(--abstand-l) 0 0 0;
 }
+
+
+/* ---------------------------------------------------------------
+ * 25. Der Konzept-Bereich
+ * --------------------------------------------------------------- */
+
+.konzept-leitidee {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-m);
+  margin-bottom: var(--abstand-xl);
+  max-width: var(--breite-formular);
+}
+
+.konzept-zeichen {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+  flex-shrink: 0;
+}
+
+.konzept-satz {
+  margin: 0;
+}
+
+/* Vier Schritte nebeneinander, auf dem Handy untereinander. */
+.schritte {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-rollenkarte), 1fr));
+  gap: var(--abstand-m);
+  margin: 0;
+  padding: 0;
+}
+
+.schritt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  padding: var(--abstand-l);
+}
+
+.schritt-zeichen {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+}
+
+.schritt-text {
+  display: block;
+}
+
+/* Die Kategorien als kompakte Zeilen mit Symbol, Name und Punkten rechts. */
+.kategorienliste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-rollenkarte), 1fr));
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.kategorie {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-s);
+  padding: var(--abstand-s) var(--abstand-m);
+}
+
+.kategorie-name {
+  flex: 1;
+}
+
+.schwellenreihe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-schwelle), 1fr));
+  gap: var(--abstand-m);
+  max-width: var(--breite-formular);
+}
+
+.schwelle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+  padding: var(--abstand-l) var(--abstand-m);
+}
+
+.konzept-hinweis {
+  margin: var(--abstand-m) 0 0 0;
+  max-width: var(--breite-formular);
+}
+
+.rollenreihe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-rollenkarte), 1fr));
+  gap: var(--abstand-m);
+}
+
+.rollenkarte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+  padding: var(--abstand-l);
+}
+
+.rollen-zeichen {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+  margin-bottom: var(--abstand-s);
+}
+
+.rollen-name {
+  margin: 0;
+}
+
+.rollen-text {
+  margin: 0;
+}
+
+.geldliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+  max-width: var(--breite-formular);
+}
+
+.geldpunkt {
+  padding: var(--abstand-xs) 0 var(--abstand-xs) var(--abstand-m);
+}
+
+.konzept-ehrlich {
+  margin: var(--abstand-xl) 0 0 0;
+  padding-top: var(--abstand-m);
+  max-width: var(--breite-formular);
+}
