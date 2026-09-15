@@ -1518,6 +1518,29 @@ function ladeStand() {
 }
 
 
+// Löscht das geöffnete Bauvorhaben nach Rückfrage. Die Liste wird an Ort und
+// Stelle verändert (splice), nicht ersetzt, weil sie in daten.js mit const
+// angelegt ist und alle Stellen weiter auf dieselbe Liste zeigen sollen.
+function verbindeLoeschen() {
+  document.getElementById("loeschenKnopf").addEventListener("click", function () {
+    if (!aktuellesVorhaben) {
+      return;
+    }
+    if (!window.confirm("„" + aktuellesVorhaben.name + "“ wirklich löschen?")) {
+      return;
+    }
+    const stelle = bauvorhaben.indexOf(aktuellesVorhaben);
+    if (stelle !== -1) {
+      bauvorhaben.splice(stelle, 1);
+    }
+    aktuellesVorhaben = null;
+    sichereStand();
+    zeichneBauvorhaben();
+    zeigeAnsicht("liste");
+  });
+}
+
+
 function verbindeZuruecksetzen() {
   document.getElementById("zuruecksetzenKnopf").addEventListener("click", function () {
     // Gefragt wird ausdrücklich, weil der Klick alles verwirft und sich nicht
@@ -1558,6 +1581,7 @@ function starte() {
   verbindeMeldeformular();
   zeichneBuergerdashboard();
   verbindeZuruecksetzen();
+  verbindeLoeschen();
   // Bauherr ist beim Laden aktiv, weil das der zahlende Kunde ist und die
   // Ansicht, die in der Vorführung zuerst gezeigt wird.
   zeigeRolle("bauherr");

@@ -1114,3 +1114,15 @@ body {
 .pass-antrag {
   margin: var(--abstand-xs) 0 0 0;
 }
+
+
+/* ---------------------------------------------------------------
+ * 23. Löschen
+ * --------------------------------------------------------------- */
+
+/* "margin-left: auto" schiebt den Knopf in der Leiste ganz nach rechts, weg
+   von den Knöpfen, die man in der Vorführung wirklich drückt. */
+.knopf-loeschen {
+  margin-left: auto;
+  padding: var(--abstand-xs) var(--abstand-m);
+}

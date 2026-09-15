@@ -1397,3 +1397,20 @@ body {
   font-size: var(--schrift-klein);
   color: var(--farbe-text-leise);
 }
+
+
+/* ---------------------------------------------------------------
+ * 25. Löschen
+ *
+ * Leise, mit roter Schrift. Es soll auffindbar sein, aber nicht einladen.
+ * --------------------------------------------------------------- */
+
+.knopf-loeschen {
+  background-color: transparent;
+  color: var(--farbe-ampel-rot);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-rund);
+  font-family: var(--schrift);
+  font-size: var(--schrift-winzig);
+  cursor: pointer;
+}
