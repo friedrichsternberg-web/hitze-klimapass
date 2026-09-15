@@ -1061,14 +1061,21 @@ body {
  * 22. Der Antrag
  * --------------------------------------------------------------- */
 
-/* Der Schleier liegt über allem und hält den Kasten in der Mitte. */
+/* Der Schleier liegt über allem und hält den Kasten in der Mitte.
+   Er ist nur da, wenn er die Klasse "offen" trägt. Ein hidden-Attribut
+   reicht hier nicht: ein display in der Anordnung schlägt das display: none
+   des Attributs, und der Schleier stünde nach jedem Laden im Bild. */
 .pruefung {
   position: fixed;
   inset: 0;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: var(--abstand-m);
+}
+
+.pruefung.offen {
+  display: flex;
 }
 
 .pruefung-kasten {

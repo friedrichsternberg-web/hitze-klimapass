@@ -943,7 +943,7 @@ function fuehrePruefungDurch(vorhaben) {
   schritte.forEach(function (schritt) {
     schritt.classList.remove("erledigt");
   });
-  schleier.hidden = false;
+  schleier.classList.add("offen");
 
   const takt = 650;
   schritte.forEach(function (schritt, nummer) {
@@ -953,7 +953,7 @@ function fuehrePruefungDurch(vorhaben) {
   });
 
   setTimeout(function () {
-    schleier.hidden = true;
+    schleier.classList.remove("offen");
     vorhaben.antragDatum = heute();
     sichereStand();
     aktualisiereAntragKnopf();
