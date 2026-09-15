@@ -58,6 +58,9 @@ body {
 }
 
 .umschalter-knopf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--abstand-xs);
   padding: var(--abstand-s) var(--abstand-l);
 }
 
@@ -1125,4 +1128,50 @@ body {
 .knopf-loeschen {
   margin-left: auto;
   padding: var(--abstand-xs) var(--abstand-m);
+}
+
+
+/* ---------------------------------------------------------------
+ * 24. Skyline und Boden
+ *
+ * Beide Bänder laufen über die volle Breite der Bühne. Das SVG hat
+ * "xMidYMax slice", es füllt die Breite und schneidet rechts und links ab,
+ * statt sich zu verzerren.
+ * --------------------------------------------------------------- */
+
+.kopfbild {
+  max-width: var(--breite-buehne);
+  margin: 0 auto var(--abstand-m) auto;
+}
+
+.skyline {
+  display: block;
+  width: 100%;
+  height: var(--hoehe-skyline);
+}
+
+.fuss {
+  max-width: var(--breite-buehne);
+  margin: var(--abstand-xl) auto 0 auto;
+}
+
+.fussboden {
+  display: block;
+  width: 100%;
+  height: var(--hoehe-boden);
+}
+
+.titelblatt {
+  display: inline-block;
+  width: var(--groesse-titelblatt);
+  height: var(--groesse-titelblatt);
+  vertical-align: -0.15em;
+  margin-right: var(--abstand-xs);
+}
+
+.pass-skyline {
+  display: block;
+  width: 100%;
+  height: var(--hoehe-boden);
+  margin: var(--abstand-l) 0 0 0;
 }

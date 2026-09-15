@@ -915,6 +915,8 @@ function zeichnePass(vorhaben) {
     ${zeichnePasstabelle(ergebnis)}
     ${zeichnePassauflagen(vorhaben, ergebnis)}
 
+    <svg class="pass-skyline" aria-hidden="true"><use href="#grafik-skyline"></use></svg>
+
     <p class="pass-fuss">
       ${vorhaben.antragDatum ? "Antrag eingereicht am " + schreibeDatumDeutsch(vorhaben.antragDatum) + ", Angaben geprüft. " : ""}
       Ausgestellt am ${schreibeDatumDeutsch(heute())}.

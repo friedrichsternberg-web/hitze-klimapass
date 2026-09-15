@@ -52,6 +52,16 @@
     display: none;
   }
 
+  /* Skyline-Band und Boden sind Bildschirmschmuck. Die kleine Skyline im
+     Fuß des Zertifikats bleibt, sie gehört zum Dokument. */
+  .kopfbild {
+    display: none;
+  }
+
+  .fuss {
+    display: none;
+  }
+
   /* Auf Papier braucht der Pass keinen Kasten um sich herum, das Blatt ist
      schon der Kasten. Die volle Breite nutzen, statt in der Mitte zu kleben.
      print-color-adjust sagt dem Browser, dass er den Ampelstreifen wirklich

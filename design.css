@@ -149,6 +149,11 @@
   /* Wie breit die Illustration im leeren Zustand höchstens wird. */
   --breite-einstiegsbild: 22rem;
 
+  /* Skyline-Band unter dem Kopf und Boden am Seitenende. */
+  --hoehe-skyline: 7rem;
+  --hoehe-boden: 3rem;
+  --groesse-titelblatt: 1em;
+
   /* Farben der Gebäudeskizze. Gedeckt, damit sie neben der Ampel nicht
      laut wird. Die helle Wand und das helle Dach sind die Antwort auf
      "helle Materialien" und müssen sich sichtbar von den dunklen absetzen. */
@@ -1413,4 +1418,36 @@ body {
   font-family: var(--schrift);
   font-size: var(--schrift-winzig);
   cursor: pointer;
+}
+
+
+/* ---------------------------------------------------------------
+ * 26. Skyline und Boden
+ *
+ * Die Bildsprache der Skizzen als Rahmen der Seite. Absichtlich blass:
+ * ein Band, das den Kopf abschließt, nicht ein Bild, das ablenkt. Die
+ * Klassen beginnen mit "sky-", damit sie sich nicht mit den Skizzenklassen
+ * mischen, obwohl sie dieselben Farbvariablen nutzen.
+ * --------------------------------------------------------------- */
+
+.kopfbild {
+  color: var(--farbe-akzent);
+}
+
+.sky-wand { fill: var(--skizze-wand-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
+.sky-fenster { fill: var(--skizze-fenster); opacity: 0.8; }
+.sky-dach { fill: var(--skizze-dach); opacity: 0.55; }
+.sky-gruen { fill: var(--skizze-gruen); }
+.sky-blatt { fill: var(--skizze-blatt-hell); }
+.sky-blatt.dunkel { fill: var(--skizze-blatt-dunkel); }
+.sky-blatt.licht { fill: var(--skizze-wand-hell); opacity: 0.45; }
+.sky-stamm { fill: var(--skizze-stamm); }
+.sky-boden { stroke: var(--skizze-linie); stroke-width: 2; opacity: 0.5; }
+.sky-gras { fill: none; stroke: var(--skizze-blatt-dunkel); stroke-width: 1.2; stroke-linecap: round; opacity: 0.7; }
+.sky-blume { fill: var(--skizze-blume); }
+
+/* Das Blatt vor einer Abschnittsüberschrift nimmt den Akzent. */
+.titelblatt {
+  color: var(--farbe-akzent);
+  fill: currentColor;
 }
