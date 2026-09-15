@@ -13,6 +13,7 @@
 // nur die Rechnung.
 
 load("bewertung.js");
+load("skizze.js");
 
 
 // ---------------------------------------------------------------
@@ -300,6 +301,27 @@ pruefe("Rasengitter auf befestigter Fläche", 20, gitter.unversiegelt);
 pruefe("Baumziel bei 1200 m² Freifläche", 12, zielwertFuer(bau, findeKategorie("baeume")));
 pruefe("Baumziel bei winziger Freifläche mindestens eins", 1,
   zielwertFuer(Object.assign({}, bau, { freiflaeche: 40 }), findeKategorie("baeume")));
+
+
+print("");
+print("Skizze");
+
+// Die Skizze ist nur Text. Gezählt wird, was darin vorkommt.
+const skizzenbau = Object.assign(testVorhaben({}), { gebaeudeart: "wohngebaeude" });
+const kahl = zeichneSkizze(Object.assign({}, skizzenbau, { antworten: leereAntworten() }));
+pruefe("ergibt ein SVG", true, kahl.indexOf("<svg") === 0 || kahl.trim().indexOf("<svg") === 0);
+pruefe("ohne Bäume keine Krone", 0, (kahl.match(/skizze-krone/g) || []).length);
+pruefe("ohne Innenhof ein Block", 1, (kahl.match(/class="skizze-wand"/g) || []).length);
+
+const bewachsen = zeichneSkizze(Object.assign({}, skizzenbau, {
+  antworten: Object.assign(leereAntworten(), { baeume: 4, innenhof: true, dachbegruenung: 50, zisterne: 20 })
+}));
+pruefe("vier Bäume, vier Kronen", 4, (bewachsen.match(/skizze-krone/g) || []).length);
+pruefe("Innenhof macht zwei Flügel", 2, (bewachsen.match(/class="skizze-wand"/g) || []).length);
+pruefe("Zisterne wird gezeichnet", true, bewachsen.indexOf("skizze-rohr") > -1);
+
+const viele = zeichneSkizze(Object.assign({}, skizzenbau, { antworten: Object.assign(leereAntworten(), { baeume: 40 }) }));
+pruefe("mehr Bäume als Platz: Zahl steht dabei", true, viele.indexOf("40 Bäume") > -1);
 
 
 // ---------------------------------------------------------------

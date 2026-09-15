@@ -148,6 +148,26 @@
 
   /* Wie breit die Illustration im leeren Zustand höchstens wird. */
   --breite-einstiegsbild: 22rem;
+
+  /* Farben der Gebäudeskizze. Gedeckt, damit sie neben der Ampel nicht
+     laut wird. Die helle Wand und das helle Dach sind die Antwort auf
+     "helle Materialien" und müssen sich sichtbar von den dunklen absetzen. */
+  --skizze-wand: #B9AE9C;
+  --skizze-wand-hell: #F1EBDD;
+  --skizze-wand-hinten: #D6CDBB;
+  --skizze-dach: #6E6A61;
+  --skizze-dach-hell: #E9E4D8;
+  --skizze-fenster: #8FB5C9;
+  --skizze-gruen: #4E9A6A;
+  --skizze-stamm: #7A5A3A;
+  --skizze-befestigt: #CFC8BA;
+  --skizze-asphalt: #8B8780;
+  --skizze-kies: #E3DCCB;
+  --skizze-wasser: #5B9BD5;
+  --skizze-segel: #E9C46A;
+  --skizze-linie: #6E6A61;
+  --hoehe-skizze-kachel: 7rem;
+  --groesse-ring-mini: 3.5rem;
 }
 
 
@@ -1207,5 +1227,96 @@ body {
    ein geneigtes Dach die Begrünung begrenzt. */
 .frage-hinweis {
   font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 23. Die Gebäudeskizze
+ *
+ * Jede Klasse ist ein Bauteil. Die Farben kommen aus den Variablen oben,
+ * skizze.js selbst kennt keine Farbe.
+ * --------------------------------------------------------------- */
+
+.skizzenrahmen {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.skizze-wand { fill: var(--skizze-wand); }
+.skizze-wand.hell { fill: var(--skizze-wand-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
+.skizze-wand.hinten { fill: var(--skizze-wand-hinten); }
+.skizze-dach { fill: var(--skizze-dach); }
+.skizze-dach.hell { fill: var(--skizze-dach-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
+.skizze-fenster { fill: var(--skizze-fenster); }
+.skizze-glas { fill: var(--skizze-fenster); opacity: 0.8; }
+.skizze-markise { stroke: var(--skizze-segel); stroke-width: 3; stroke-linecap: round; }
+.skizze-saeule { fill: var(--skizze-wand-hell); stroke: var(--skizze-linie); stroke-width: 0.8; }
+.skizze-tor { fill: var(--skizze-dach); }
+.skizze-gruen { fill: var(--skizze-gruen); }
+.skizze-krone { fill: var(--skizze-gruen); }
+.skizze-stamm { fill: var(--skizze-stamm); }
+.skizze-befestigt { fill: var(--skizze-befestigt); }
+.skizze-belag-asphalt { fill: var(--skizze-asphalt); }
+.skizze-belag-kies { fill: var(--skizze-kies); }
+.skizze-belag-rasengitter { fill: var(--skizze-befestigt); }
+.skizze-belagpunkt { fill: var(--skizze-linie); opacity: 0.5; }
+.skizze-bodenlinie { stroke: var(--skizze-linie); stroke-width: 1.5; }
+.skizze-wasser { fill: var(--skizze-wasser); }
+.skizze-rohr { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
+.skizze-mulde { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
+.skizze-sicker { stroke: var(--skizze-wasser); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.skizze-segel { fill: var(--skizze-segel); }
+.skizze-mast { stroke: var(--skizze-linie); stroke-width: 1.5; }
+.skizze-text { fill: var(--farbe-text-leise); font-family: var(--schrift); font-size: 11px; }
+
+
+/* ---------------------------------------------------------------
+ * 24. Der Antrag
+ *
+ * Die Prüfung ist eine Simulation: ein Kasten über der Seite, drei Schritte,
+ * die nacheinander abgehakt werden. Der dunkle Schleier dahinter nimmt den
+ * Rest der Seite aus dem Blick.
+ * --------------------------------------------------------------- */
+
+.pruefung {
+  background-color: rgba(27, 26, 23, 0.45);
+}
+
+.pruefung-kasten {
+  background-color: var(--farbe-flaeche);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-obenauf);
+}
+
+.pruefung-zeichen {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+.pruefung-titel {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+}
+
+.pruefung-schritte {
+  list-style: none;
+}
+
+.pruefung-schritt {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+  transition: color var(--dauer-mittel) linear;
+}
+
+.pruefung-schritt.erledigt {
+  color: var(--farbe-akzent);
+  font-weight: var(--fett-halb);
+}
+
+.pass-antrag {
+  font-size: var(--schrift-klein);
   color: var(--farbe-text-leise);
 }

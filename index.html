@@ -272,10 +272,9 @@
       <div class="ansicht" data-ansicht="detail" hidden>
         <div class="kopfleiste">
           <button class="zurueck" type="button" data-zurueck="liste">← Alle Bauvorhaben</button>
-          <button class="knopf-laut knopf-zertifikat" type="button" id="passKnopf">
-            <svg class="symbol" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>
-            Zu deinem Hitze-Klimapass Zertifikat
-          </button>
+          <!-- Vor dem Antrag heißt der Knopf "Antrag abgeben", danach
+               "Zertifikat ansehen". app.js setzt die Beschriftung. -->
+          <button class="knopf-laut knopf-zertifikat" type="button" id="passKnopf"></button>
         </div>
         <h2 class="detail-name" id="detailName"></h2>
         <p class="detail-bezirk" id="detailBezirk"></p>
@@ -283,7 +282,12 @@
           <!-- Links die Regler, rechts das Ergebnis. Die Rechnung läuft bei jeder
                Änderung sofort, deshalb gibt es keinen Absenden-Knopf. -->
           <div class="eingabefeld" id="eingabefeld"></div>
-          <div class="ergebnisfeld" id="ergebnisfeld"></div>
+          <div class="ergebnisspalte">
+            <!-- Die Skizze wächst beim Ausfüllen mit. skizze.js zeichnet sie,
+                 app.js setzt sie hier ein, bei jeder Änderung neu. -->
+            <div class="skizzenrahmen" id="skizzenfeld"></div>
+            <div class="ergebnisfeld" id="ergebnisfeld"></div>
+          </div>
         </div>
       </div>
 
@@ -454,13 +458,31 @@
        bewertung.js rechnet damit, fasst aber die Seite nie an.
        adresse.js ist die einzige Datei, die ins Internet greift.
        speicher.js ist die einzige, die etwas auf dem Gerät ablegt.
+       skizze.js zeichnet aus den Antworten eine Gebäudeskizze, nur als Text.
        app.js benutzt alle drei und zeichnet die Oberfläche.
        Stünde app.js zuerst, wären Daten und Rechnung noch nicht da und das
        Skript bräche gleich in der ersten Zeile ab. -->
+  <!-- Die simulierte Prüfung nach "Antrag abgeben". app.js blendet den Kasten
+       ein, hakt die drei Schritte nacheinander ab und öffnet dann das
+       Zertifikat. Geprüft wird dabei nichts, was nicht ohnehin schon
+       gerechnet ist. Es zeigt den Weg, den ein echter Antrag nähme. -->
+  <div class="pruefung" id="pruefung" hidden>
+    <div class="pruefung-kasten" role="status" aria-live="polite">
+      <svg class="pruefung-zeichen" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>
+      <p class="pruefung-titel">Antrag wird geprüft</p>
+      <ul class="pruefung-schritte">
+        <li class="pruefung-schritt" data-schritt="1">Adresse und Bezirk</li>
+        <li class="pruefung-schritt" data-schritt="2">Flächen auf Plausibilität</li>
+        <li class="pruefung-schritt" data-schritt="3">Bewertung in sieben Kategorien</li>
+      </ul>
+    </div>
+  </div>
+
   <script src="daten.js"></script>
   <script src="bewertung.js"></script>
   <script src="adresse.js"></script>
   <script src="speicher.js"></script>
+  <script src="skizze.js"></script>
   <script src="app.js"></script>
 
 </body>

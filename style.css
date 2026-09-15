@@ -1013,3 +1013,97 @@ body {
   grid-column: 1 / -1;
   margin: 0;
 }
+
+
+/* ---------------------------------------------------------------
+ * 21. Die Gebäudeskizze
+ * --------------------------------------------------------------- */
+
+/* In der Detailansicht über dem Ergebnis, in voller Breite der Spalte. */
+.skizzenrahmen {
+  padding: var(--abstand-m);
+  margin-bottom: var(--abstand-l);
+}
+
+.skizze {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Auf der Kachel ist die Skizze das Hauptbild. Darunter stehen Ring und
+   Status nebeneinander. */
+.kachel-skizze {
+  display: block;
+  margin: var(--abstand-s) 0 var(--abstand-s) 0;
+}
+
+.kachel-fuss {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-s);
+  margin: auto 0 0 0;
+}
+
+.punktering-mini {
+  width: var(--groesse-ring-mini);
+  height: var(--groesse-ring-mini);
+  flex-shrink: 0;
+}
+
+.pass-skizze {
+  margin: 0 0 var(--abstand-l) 0;
+  max-width: var(--breite-formular);
+}
+
+
+/* ---------------------------------------------------------------
+ * 22. Der Antrag
+ * --------------------------------------------------------------- */
+
+/* Der Schleier liegt über allem und hält den Kasten in der Mitte. */
+.pruefung {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--abstand-m);
+}
+
+.pruefung-kasten {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--abstand-m);
+  padding: var(--abstand-xl);
+  max-width: var(--breite-formular);
+  width: 100%;
+}
+
+.pruefung-zeichen {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+}
+
+.pruefung-titel {
+  margin: 0;
+}
+
+.pruefung-schritte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.pruefung-schritt {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-s);
+}
+
+.pass-antrag {
+  margin: var(--abstand-xs) 0 0 0;
+}

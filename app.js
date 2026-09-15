@@ -237,8 +237,11 @@ function zeichneBauvorhaben() {
         <span class="kachel-name">${vorhaben.name}</span>
         <span class="kachel-bezirk">${vorhaben.adresse || bezirksName}</span>
         <span class="kachel-art">${nameDerGebaeudeart(vorhaben.gebaeudeart)}</span>
-        ${zeichnePunktering(ergebnis.gesamtPunkte, ergebnis.ampel, "punktering-klein")}
-        <span class="kachel-status">${statusFuer(ergebnis.ampel)}</span>
+        <span class="kachel-skizze">${zeichneSkizze(vorhaben)}</span>
+        <span class="kachel-fuss">
+          ${zeichnePunktering(ergebnis.gesamtPunkte, ergebnis.ampel, "punktering-mini")}
+          <span class="kachel-status">${statusFuer(ergebnis.ampel)}</span>
+        </span>
       </button>
     `;
   });
@@ -486,6 +489,13 @@ function uebernimmAntwort(kennung, rohwert) {
   }
 
   aktualisiereEingabe(aktuellesVorhaben);
+
+  // Wer nach dem Antrag noch etwas ändert, muss neu beantragen. Sonst stünde
+  // auf dem Zertifikat ein Prüfdatum für Angaben, die es so nie gab.
+  if (aktuellesVorhaben.antragDatum) {
+    delete aktuellesVorhaben.antragDatum;
+    aktualisiereAntragKnopf();
+  }
 }
 
 
@@ -542,6 +552,7 @@ function zeichneLuecke(vorhaben, ergebnis) {
 
 function zeichneErgebnis(vorhaben) {
   const ergebnis = bewerteVorhaben(vorhaben);
+  document.getElementById("skizzenfeld").innerHTML = zeichneSkizze(vorhaben);
 
   document.getElementById("ergebnisfeld").innerHTML = `
     <div class="ergebnis-kopf" style="--ampel-farbe: ${ampelFarbe(ergebnis.ampel)}">
@@ -580,6 +591,7 @@ function oeffneDetail(vorhabenKennung) {
   aktualisiereEingabe(aktuellesVorhaben);
   zeichneEingabe(aktuellesVorhaben);
   zeichneErgebnis(aktuellesVorhaben);
+  aktualisiereAntragKnopf();
   zeigeAnsicht("detail");
 }
 
@@ -896,10 +908,13 @@ function zeichnePass(vorhaben) {
       </div>
     </div>
 
+    <div class="pass-skizze">${zeichneSkizze(vorhaben)}</div>
+
     ${zeichnePasstabelle(ergebnis)}
     ${zeichnePassauflagen(vorhaben, ergebnis)}
 
     <p class="pass-fuss">
+      ${vorhaben.antragDatum ? "Antrag eingereicht am " + schreibeDatumDeutsch(vorhaben.antragDatum) + ", Angaben geprüft. " : ""}
       Ausgestellt am ${schreibeDatumDeutsch(heute())}.
       Prototyp, keine amtliche Anwendung. Gewichte, Kosten und Förderquoten
       sind gesetzte Annahmen.
@@ -908,13 +923,57 @@ function zeichnePass(vorhaben) {
 }
 
 
+// Die Beschriftung des Knopfes hängt daran, ob schon ein Antrag vorliegt.
+function aktualisiereAntragKnopf() {
+  const knopf = document.getElementById("passKnopf");
+  const liegtVor = aktuellesVorhaben && aktuellesVorhaben.antragDatum;
+  knopf.innerHTML = `<svg class="symbol" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>`
+    + (liegtVor ? "Zertifikat ansehen" : "Antrag abgeben");
+  knopf.classList.toggle("knopf-laut", !liegtVor);
+  knopf.classList.toggle("knopf-leise", !!liegtVor);
+}
+
+
+// Die simulierte Prüfung. Drei Schritte werden nacheinander abgehakt, dann
+// öffnet sich das Zertifikat. Es ist eine Vorführung des Weges, den ein
+// echter Antrag nähme, gerechnet ist zu diesem Zeitpunkt längst alles.
+function fuehrePruefungDurch(vorhaben) {
+  const schleier = document.getElementById("pruefung");
+  const schritte = schleier.querySelectorAll(".pruefung-schritt");
+  schritte.forEach(function (schritt) {
+    schritt.classList.remove("erledigt");
+  });
+  schleier.hidden = false;
+
+  const takt = 650;
+  schritte.forEach(function (schritt, nummer) {
+    setTimeout(function () {
+      schritt.classList.add("erledigt");
+    }, takt * (nummer + 1));
+  });
+
+  setTimeout(function () {
+    schleier.hidden = true;
+    vorhaben.antragDatum = heute();
+    sichereStand();
+    aktualisiereAntragKnopf();
+    zeichnePass(vorhaben);
+    zeigeAnsicht("pass");
+  }, takt * (schritte.length + 1));
+}
+
+
 function verbindePass() {
   document.getElementById("passKnopf").addEventListener("click", function () {
     if (!aktuellesVorhaben) {
       return;
     }
-    zeichnePass(aktuellesVorhaben);
-    zeigeAnsicht("pass");
+    if (aktuellesVorhaben.antragDatum) {
+      zeichnePass(aktuellesVorhaben);
+      zeigeAnsicht("pass");
+      return;
+    }
+    fuehrePruefungDurch(aktuellesVorhaben);
   });
 
   document.getElementById("druckenKnopf").addEventListener("click", function () {
@@ -1390,8 +1449,11 @@ function zeichneGepruefteGebaeude() {
         <span class="kachel-name">${vorhaben.name}</span>
         <span class="kachel-bezirk">${vorhaben.adresse || (bezirk ? bezirk.name : "")}</span>
         <span class="kachel-art">${nameDerGebaeudeart(vorhaben.gebaeudeart)}</span>
-        ${zeichnePunktering(ergebnis.gesamtPunkte, ergebnis.ampel, "punktering-klein")}
-        <span class="kachel-status">${statusFuer(ergebnis.ampel)}</span>
+        <span class="kachel-skizze">${zeichneSkizze(vorhaben)}</span>
+        <span class="kachel-fuss">
+          ${zeichnePunktering(ergebnis.gesamtPunkte, ergebnis.ampel, "punktering-mini")}
+          <span class="kachel-status">${statusFuer(ergebnis.ampel)}</span>
+        </span>
       </article>
     `;
   }).join("");
