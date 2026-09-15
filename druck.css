@@ -1,0 +1,86 @@
+/* druck.css
+ *
+ * Wie der Klimapass auf Papier aussieht. Alles hier steht in einem
+ * @media print und gilt deshalb ausschließlich beim Drucken oder in der
+ * Druckvorschau. Am Bildschirm ändert diese Datei nichts.
+ *
+ * Gedruckt wird immer das, was gerade sichtbar ist. Praktisch ist das der
+ * Klimapass, weil man nur aus seiner Ansicht heraus auf Drucken klickt. Die
+ * übrigen Rollen und Ansichten sind zu diesem Zeitpunkt ohnehin schon
+ * ausgeblendet, sie müssen hier nicht noch einmal weggeschaltet werden.
+ *
+ * Wie in style.css gilt auch hier: keine feste Farbe und kein festes Maß,
+ * alles kommt als Variable aus design.css. Die einzige Ausnahme ist der
+ * Seitenrand in @page, der Grund steht dort.
+ */
+
+@media print {
+
+  /* Der Seitenrand des Blattes. Ihn setzt man nicht am body, sondern an @page,
+     das ist die Regel für das Papier selbst. Nur so bekommt auch die zweite
+     Seite oben einen Rand.
+
+     Hier steht ausnahmsweise ein festes Maß statt einer Variablen aus
+     design.css, und zwar aus einem harten Grund: @page beschreibt das Blatt
+     und kein Element. Variablen werden aber immer an einem Element
+     nachgeschlagen. Ein var() steht in @page zwar im Regelwerk, wird aber nie
+     aufgelöst, und der Browser nimmt stillschweigend seinen eigenen Rand.
+     Das ist die einzige Stelle im Projekt mit einem festen Maß außerhalb von
+     design.css. */
+  @page {
+    margin: 16mm;
+  }
+
+  /* Der Bildschirmrand fällt weg, den Rand macht jetzt das Papier. */
+  body {
+    padding: 0;
+  }
+
+  /* Seitenkopf, Rollenumschalter und die Knopfleiste gehören auf den
+     Bildschirm, nicht auf ein Dokument. Der Hinweis "Prototyp, keine
+     amtliche Anwendung" fällt damit oben weg, steht aber im Fuß des Passes
+     noch einmal. Er verschwindet also nicht vom Blatt. */
+  .kopf {
+    display: none;
+  }
+
+  .umschalter {
+    display: none;
+  }
+
+  .kopfleiste {
+    display: none;
+  }
+
+  /* Auf Papier braucht der Pass keinen Kasten um sich herum, das Blatt ist
+     schon der Kasten. Die volle Breite nutzen, statt in der Mitte zu kleben.
+     print-color-adjust sagt dem Browser, dass er den Ampelstreifen wirklich
+     drucken soll. Ohne diese Zeile lässt er Farbflächen zum Tintensparen weg,
+     und die Ampel wäre auf dem Ausdruck verschwunden. */
+  .pass {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    max-width: 100%;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Auf Papier gibt es kein seitliches Scrollen. Der Kasten um die Tabelle
+     verliert deshalb seine Mindestbreite, damit nichts über den Blattrand
+     hinausläuft. */
+  .pass-tabelle {
+    min-width: 0;
+  }
+
+  /* Eine Tabellenzeile soll nicht in der Mitte auf die nächste Seite
+     umbrechen. */
+  .pass-zeile {
+    break-inside: avoid;
+  }
+
+  .pass-auflage {
+    break-inside: avoid;
+  }
+
+}

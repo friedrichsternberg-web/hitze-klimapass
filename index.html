@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Berliner Hitze-Klimapass</title>
+
+  <!-- Die Ladereihenfolge der beiden Stilvorlagen ist Pflicht.
+       design.css legt die Designsprache fest: Farben, Schriftgrößen, Abstände,
+       Radien. Es kennt keine Anordnung.
+       style.css ordnet die Kästen an und holt sich jede Farbe und jedes Maß als
+       Variable aus design.css. Käme style.css zuerst, wären diese Variablen noch
+       nicht bekannt und die Anordnung hätte nichts, womit sie rechnen kann. -->
+  <link rel="stylesheet" href="design.css">
+  <link rel="stylesheet" href="style.css">
+  <!-- druck.css steht zuletzt, weil es die Anordnung für Papier überschreibt.
+       Es gilt nur im Druck und ändert am Bildschirm nichts. -->
+  <link rel="stylesheet" href="druck.css">
+</head>
+<body>
+
+  <!-- Die Symbolsammlung.
+       Jedes Zeichen steht hier genau einmal als <symbol> mit einer Kennung.
+       Gebraucht wird es dann mit <svg class="symbol"><use href="#kennung"></use></svg>,
+       beliebig oft und überall auf der Seite. Das ist derselbe Gedanke wie bei
+       den Bezirksnamen in daten.js: einmal beschreiben, oft benutzen.
+
+       Das ganze svg hier ist versteckt, es zeichnet selbst nichts. Es ist nur
+       der Vorrat, aus dem sich die sichtbaren Stellen bedienen.
+
+       Alle Zeichen sind in ein Feld von 24 mal 24 gezeichnet und benutzen
+       currentColor. Dadurch nehmen sie die Schriftfarbe der Stelle an, wo sie
+       stehen, und müssen nicht je Farbe neu gebaut werden. -->
+  <svg class="symbolvorrat" aria-hidden="true">
+
+    <!-- Die Marke: ein Dach, darunter ein Blatt. Bauen und Kühlen in einem
+         Zeichen. -->
+    <symbol id="symbol-marke" viewBox="0 0 24 24">
+      <path d="M3 11 12 3l9 8" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 21c0-4 2-6 6-6 0 4-2 6-6 6z" fill="currentColor"/>
+      <path d="M12 21c0-4-2-6-6-6 0 4 2 6 6 6z" fill="currentColor" opacity="0.55"/>
+    </symbol>
+
+    <!-- Sonne, für "Kein Schatten" -->
+    <symbol id="symbol-sonne" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4.5" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22"/>
+        <path d="M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19"/>
+      </g>
+    </symbol>
+
+    <!-- Aufgeheizter Belag: Pflastersteine mit Hitzewellen darüber -->
+    <symbol id="symbol-belag" viewBox="0 0 24 24">
+      <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none">
+        <path d="M4 5c0 2 2 2 2 4s-2 2-2 4"/>
+        <path d="M12 5c0 2 2 2 2 4s-2 2-2 4"/>
+        <path d="M20 5c0 2-2 2-2 4"/>
+      </g>
+      <rect x="2" y="17" width="9" height="5" rx="1" fill="currentColor"/>
+      <rect x="13" y="17" width="9" height="5" rx="1" fill="currentColor" opacity="0.55"/>
+    </symbol>
+
+    <!-- Tropfen, für "Kein Trinkwasser" -->
+    <symbol id="symbol-tropfen" viewBox="0 0 24 24">
+      <path d="M12 2.5c4 5 6.5 8 6.5 11a6.5 6.5 0 0 1-13 0c0-3 2.5-6 6.5-11z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- Sprechblase, für die Zahl der Meldungen -->
+    <symbol id="symbol-meldung" viewBox="0 0 24 24">
+      <path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v9a2.5 2.5 0 0 1-2.5 2.5H9l-5 4v-4H5.5A2.5 2.5 0 0 1 3 14.5z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- Haus mit Haken, für geprüfte Gebäude -->
+    <symbol id="symbol-geprueft" viewBox="0 0 24 24">
+      <path d="M3 10.5 12 3l9 7.5V21H3z" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linejoin="round"/>
+      <path d="M8 14l3 3 5.5-6" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <!-- Blatt, für Kühlmaßnahmen und Freigaben -->
+    <symbol id="symbol-blatt" viewBox="0 0 24 24">
+      <path d="M20 3C10 3 4 8 4 15c0 2 .7 3.8 1.8 5.2C8 15 12 12 18 10.5 13 13 9 16.5 7.4 21H11c8 0 11-7 9-18z"
+            fill="currentColor"/>
+    </symbol>
+
+    <!-- Thermometer, für den Bezirk mit den meisten Meldungen -->
+    <symbol id="symbol-thermometer" viewBox="0 0 24 24">
+      <path d="M14 13.8V5a2.5 2.5 0 0 0-5 0v8.8a5 5 0 1 0 5 0z" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="11.5" cy="17.5" r="2.5" fill="currentColor"/>
+      <path d="M11.5 15V8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Eine Stadtsilhouette mit Sonne und Bäumen, breit statt quadratisch.
+         Sie steht dort, wo noch nichts angelegt wurde, damit der erste
+         Eindruck der Seite nicht eine leere Fläche ist. -->
+    <symbol id="grafik-stadt" viewBox="0 0 320 120">
+      <!-- Die Sonne steht oben rechts frei über den niedrigen Häusern. -->
+      <circle cx="272" cy="26" r="13" fill="currentColor" opacity="0.35"/>
+      <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.35">
+        <path d="M272 5v-4M272 47v4M251 26h-4M297 26h-4M257 11l-3-3M287 41l3 3M287 11l3-3M257 41l-3 3"/>
+      </g>
+
+      <!-- Die Häuser. Verschiedene Höhen und Deckkraft geben Tiefe, ohne dass
+           es eine zweite Farbe braucht. -->
+      <g fill="currentColor">
+        <rect x="16"  y="62" width="42" height="48" rx="2" opacity="0.20"/>
+        <rect x="64"  y="40" width="32" height="70" rx="2" opacity="0.32"/>
+        <rect x="102" y="72" width="50" height="38" rx="2" opacity="0.18"/>
+        <rect x="158" y="46" width="36" height="64" rx="2" opacity="0.38"/>
+        <rect x="200" y="60" width="44" height="50" rx="2" opacity="0.24"/>
+        <rect x="250" y="80" width="40" height="30" rx="2" opacity="0.18"/>
+      </g>
+
+      <!-- Die Bäume stehen vor den Häusern. Stamm und Krone sind beide
+           gefüllte Formen. Ein Stamm als bloße Linie wäre unsichtbar, weil
+           eine Linie ohne stroke nicht gezeichnet wird. -->
+      <g fill="currentColor" opacity="0.60">
+        <rect x="38"  y="94" width="4" height="16" rx="1"/>
+        <circle cx="40" cy="88" r="12"/>
+        <rect x="126" y="98" width="4" height="12" rx="1"/>
+        <circle cx="128" cy="92" r="10"/>
+        <rect x="236" y="98" width="4" height="12" rx="1"/>
+        <circle cx="238" cy="92" r="10"/>
+      </g>
+
+      <path d="M6 110h308" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" opacity="0.45"/>
+    </symbol>
+
+    <!-- Eine Sprechblase über einem Stadtausschnitt, für die leere
+         Meldungsliste. -->
+    <symbol id="grafik-melden" viewBox="0 0 320 120">
+      <g fill="currentColor">
+        <rect x="24"  y="72" width="38" height="38" rx="2" opacity="0.18"/>
+        <rect x="68"  y="56" width="30" height="54" rx="2" opacity="0.26"/>
+        <rect x="222" y="62" width="38" height="48" rx="2" opacity="0.22"/>
+        <rect x="266" y="78" width="32" height="32" rx="2" opacity="0.16"/>
+      </g>
+
+      <!-- Die Sprechblase ist die Meldung. Die Striche darin stehen für
+           geschriebenen Text und sind in der Flächenfarbe ausgespart. -->
+      <path d="M122 16h76a14 14 0 0 1 14 14v36a14 14 0 0 1-14 14h-36l-20 18V80h-20a14 14 0 0 1-14-14V30a14 14 0 0 1 14-14z"
+            fill="currentColor" opacity="0.55"/>
+      <g stroke="var(--farbe-flaeche)" stroke-width="3.5" stroke-linecap="round">
+        <path d="M140 38h40M140 54h24"/>
+      </g>
+
+      <path d="M6 110h308" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" opacity="0.45"/>
+    </symbol>
+
+    <!-- Bank, für "Keine Bank im Schatten" -->
+    <symbol id="symbol-bank" viewBox="0 0 24 24">
+      <rect x="2" y="10" width="20" height="3" rx="1" fill="currentColor"/>
+      <rect x="3" y="14" width="2.5" height="7" rx="1" fill="currentColor"/>
+      <rect x="18.5" y="14" width="2.5" height="7" rx="1" fill="currentColor"/>
+      <rect x="4" y="5" width="16" height="2.5" rx="1" fill="currentColor" opacity="0.55"/>
+    </symbol>
+
+    <!-- Wohnung, die aufheizt -->
+    <symbol id="symbol-wohnung" viewBox="0 0 24 24">
+      <path d="M4 11 12 4l8 7v9H4z" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linejoin="round"/>
+      <path d="M9 17c0-1.6 1.5-2 1.5-3.5S9 11.5 9 10" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M14 17c0-1.6 1.5-2 1.5-3.5S14 11.5 14 10" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Lupe, für die Adresssuche -->
+    <symbol id="symbol-lupe" viewBox="0 0 24 24">
+      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Ortsmarke, für gefundene Adressen -->
+    <symbol id="symbol-ort" viewBox="0 0 24 24">
+      <path d="M12 22s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12z" fill="currentColor"/>
+      <circle cx="12" cy="10" r="2.6" fill="var(--farbe-flaeche)"/>
+    </symbol>
+
+  </svg>
+
+
+  <header class="kopf">
+    <h1 class="kopf-titel">
+      <svg class="marke" aria-hidden="true"><use href="#symbol-marke"></use></svg>
+      Berliner Hitze-Klimapass
+    </h1>
+    <p class="kopf-hinweis">Prototyp, keine amtliche Anwendung. Bezirke und Adressen sind
+      echt, Gewichte und Kosten sind gesetzte Annahmen.</p>
+    <button class="zuruecksetzen" type="button" id="zuruecksetzenKnopf">Demo zurücksetzen</button>
+  </header>
+
+  <!-- Der Rollenumschalter. Jeder Schalter merkt sich in data-rolle, welchen
+       Bereich er einblenden soll. app.js vergleicht diesen Wert mit dem
+       data-bereich der Abschnitte weiter unten. -->
+  <nav class="umschalter" aria-label="Rolle wählen">
+    <button class="umschalter-knopf" type="button" data-rolle="bauherr" aria-pressed="true">Bauherr</button>
+    <button class="umschalter-knopf" type="button" data-rolle="verwaltung" aria-pressed="false">Verwaltung</button>
+    <button class="umschalter-knopf" type="button" data-rolle="buerger" aria-pressed="false">Bürger:in</button>
+  </nav>
+
+  <main class="buehne">
+
+    <!-- Bereich Bauherr. Er enthält zwei Ansichten, die sich gegenseitig ablösen:
+         die Kachelliste und die Detailansicht eines einzelnen Bauvorhabens.
+         Beide Inhalte trägt app.js ein. -->
+    <section class="bereich" data-bereich="bauherr">
+
+      <div class="ansicht" data-ansicht="liste">
+        <h2 class="bereich-titel">Bauvorhaben</h2>
+        <div class="kachelfeld" id="bauvorhabenListe"></div>
+      </div>
+
+      <!-- Das Formular für ein neues Bauvorhaben. Der Bezirk wird nicht gewählt,
+           sondern aus der Adresse ermittelt. -->
+      <div class="ansicht" data-ansicht="neu" hidden>
+        <button class="zurueck" type="button" data-zurueck="liste">← Alle Bauvorhaben</button>
+        <h2 class="detail-name">Neues Bauvorhaben</h2>
+        <div class="neuformular">
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuName">Name</label>
+            <input class="neufeld-eingabe" id="neuName" type="text">
+          </div>
+          <div class="neufeld neufeld-breit">
+            <label class="neufeld-name" for="neuAdresse">Adresse</label>
+            <div class="suchzeile">
+              <input class="neufeld-eingabe suchfeld" id="neuAdresse" type="text"
+                     placeholder="Straße, Hausnummer, Postleitzahl">
+              <button class="knopf-leise" type="button" id="neuSuchenKnopf">
+                <svg class="symbol" aria-hidden="true"><use href="#symbol-lupe"></use></svg>
+                Bezirk suchen
+              </button>
+            </div>
+            <p class="fundstelle" id="neuFundstelle"></p>
+          </div>
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuArt">Art des Gebäudes</label>
+            <select class="neufeld-eingabe" id="neuArt"></select>
+          </div>
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuGrundstueck">Grundstück in m²</label>
+            <input class="neufeld-eingabe" id="neuGrundstueck" type="number" min="0" step="10">
+          </div>
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuDach">Dach in m²</label>
+            <input class="neufeld-eingabe" id="neuDach" type="number" min="0" step="10">
+          </div>
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuFassade">Fassade in m²</label>
+            <input class="neufeld-eingabe" id="neuFassade" type="number" min="0" step="10">
+          </div>
+          <div class="neufeld">
+            <label class="neufeld-name" for="neuFrei">Freifläche in m²</label>
+            <input class="neufeld-eingabe" id="neuFrei" type="number" min="0" step="10">
+          </div>
+          <ul class="beanstandungen" id="beanstandungen"></ul>
+          <div class="knopfreihe">
+            <button class="knopf-leise" type="button" id="beispielKnopf">Beispiel einsetzen</button>
+            <button class="knopf-laut" type="button" id="anlegenKnopf">Anlegen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ansicht" data-ansicht="detail" hidden>
+        <div class="kopfleiste">
+          <button class="zurueck" type="button" data-zurueck="liste">← Alle Bauvorhaben</button>
+          <button class="knopf-laut knopf-zertifikat" type="button" id="passKnopf">
+            <svg class="symbol" aria-hidden="true"><use href="#symbol-geprueft"></use></svg>
+            Zu deinem Hitze-Klimapass Zertifikat
+          </button>
+        </div>
+        <h2 class="detail-name" id="detailName"></h2>
+        <p class="detail-bezirk" id="detailBezirk"></p>
+        <div class="detail-spalten">
+          <!-- Links die Regler, rechts das Ergebnis. Die Rechnung läuft bei jeder
+               Änderung sofort, deshalb gibt es keinen Absenden-Knopf. -->
+          <div class="eingabefeld" id="eingabefeld"></div>
+          <div class="ergebnisfeld" id="ergebnisfeld"></div>
+        </div>
+      </div>
+
+      <!-- Der Klimapass als Ausdruckansicht. Auf Papier bleibt allein der
+           Inhalt von .pass übrig, die Leiste darüber blendet druck.css aus. -->
+      <div class="ansicht" data-ansicht="pass" hidden>
+        <div class="kopfleiste">
+          <button class="zurueck" type="button" data-zurueck="detail">← Zurück zur Eingabe</button>
+          <button class="knopf-laut" type="button" id="druckenKnopf">Drucken</button>
+        </div>
+        <article class="pass" id="pass"></article>
+      </div>
+
+    </section>
+
+    <!-- Bereich Verwaltung. Drei Listen auf denselben Daten, die auch der
+         Bauherr sieht. app.js zeichnet sie bei jedem Wechsel in diese Rolle
+         neu, damit eine gerade geänderte Punktzahl sofort hier ankommt. -->
+    <section class="bereich" data-bereich="verwaltung" hidden>
+
+      <div class="block">
+        <h2 class="bereich-titel">Bauvorhaben</h2>
+        <ul class="statusliste" id="statusListe"></ul>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Bezirke</h2>
+        <ul class="bezirksliste" id="bezirksListe"></ul>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Meldungen</h2>
+        <ul class="meldungsliste" id="meldungsListe"></ul>
+      </div>
+
+    </section>
+
+    <!-- Bereich Bürger:in: das Dashboard.
+         Oben die Kennzahlen, darunter die Karte, dann das Meldeformular,
+         zuletzt die geprüften Gebäude. Alles, was hier steht, haben entweder
+         Menschen selbst gemeldet oder es kommt aus der Rechnung. -->
+    <section class="bereich" data-bereich="buerger" hidden>
+
+      <div class="kennzahlreihe" id="kennzahlreihe"></div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Gemeldete Hitze in Berlin</h2>
+        <svg class="karte" viewBox="0 0 490 410" role="img"
+             aria-label="Schematische Karte der zwölf Berliner Bezirke, eingefärbt nach erfundener Hitzebelastung">
+          <g class="bezirksflaeche" data-bezirk="reinickendorf">
+            <polygon class="bezirksflaeche-umriss" points="62,18 196,12 206,100 70,108"></polygon>
+            <text class="bezirksflaeche-name" x="134" y="48" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="134" y="62" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="134" y="88" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="pankow">
+            <polygon class="bezirksflaeche-umriss" points="216,14 372,20 364,106 222,102"></polygon>
+            <text class="bezirksflaeche-name" x="293" y="44" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="293" y="58" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="293" y="86" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="spandau">
+            <polygon class="bezirksflaeche-umriss" points="14,120 128,116 134,204 20,206"></polygon>
+            <text class="bezirksflaeche-name" x="74" y="150" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="74" y="164" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="74" y="190" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="mitte">
+            <polygon class="bezirksflaeche-umriss" points="144,116 250,120 254,186 146,184"></polygon>
+            <text class="bezirksflaeche-name" x="200" y="144" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="200" y="158" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="200" y="176" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="lichtenberg">
+            <polygon class="bezirksflaeche-umriss" points="252,118 352,122 348,206 248,200"></polygon>
+            <text class="bezirksflaeche-name" x="300" y="148" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="300" y="162" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="300" y="190" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="marzahn-hellersdorf">
+            <polygon class="bezirksflaeche-umriss" points="362,120 478,126 472,208 358,202"></polygon>
+            <text class="bezirksflaeche-name" x="418" y="148" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="418" y="162" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="418" y="190" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="charlottenburg-wilmersdorf">
+            <polygon class="bezirksflaeche-umriss" points="48,218 186,214 190,300 54,302"></polygon>
+            <text class="bezirksflaeche-name" x="119" y="244" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="119" y="258" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="119" y="288" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="friedrichshain-kreuzberg">
+            <polygon class="bezirksflaeche-umriss" points="200,196 322,200 318,282 196,276"></polygon>
+            <text class="bezirksflaeche-name" x="259" y="224" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="259" y="238" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="259" y="266" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="steglitz-zehlendorf">
+            <polygon class="bezirksflaeche-umriss" points="30,314 164,312 158,398 36,394"></polygon>
+            <text class="bezirksflaeche-name" x="97" y="342" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="97" y="356" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="97" y="382" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="tempelhof-schoeneberg">
+            <polygon class="bezirksflaeche-umriss" points="176,312 292,316 288,398 172,394"></polygon>
+            <text class="bezirksflaeche-name" x="232" y="342" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="232" y="356" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="232" y="382" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="neukoelln">
+            <polygon class="bezirksflaeche-umriss" points="304,294 398,298 392,392 300,386"></polygon>
+            <text class="bezirksflaeche-name" x="349" y="326" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="349" y="340" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="349" y="370" text-anchor="middle"></text>
+          </g>
+          <g class="bezirksflaeche" data-bezirk="treptow-koepenick">
+            <polygon class="bezirksflaeche-umriss" points="336,196 474,222 470,286 330,284"></polygon>
+            <text class="bezirksflaeche-name" x="402" y="234" text-anchor="middle"></text>
+            <text class="bezirksflaeche-name" x="402" y="248" text-anchor="middle"></text>
+            <text class="bezirksflaeche-stufe" x="402" y="272" text-anchor="middle"></text>
+          </g>
+        </svg>
+        <p class="kartenhinweis">Je dunkler ein Bezirk, desto mehr Meldungen sind
+          von dort eingegangen. Ohne Meldung bleibt er hell.</p>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Hitze melden</h2>
+        <div class="meldeformular">
+          <div class="suchzeile">
+            <input class="melde-ort suchfeld" id="meldeOrt" type="text"
+                   placeholder="Straße, Hausnummer, Postleitzahl">
+            <button class="knopf-leise" type="button" id="meldeSuchenKnopf">
+              <svg class="symbol" aria-hidden="true"><use href="#symbol-lupe"></use></svg>
+              Bezirk suchen
+            </button>
+          </div>
+          <p class="fundstelle" id="meldeFundstelle"></p>
+          <p class="melde-bezirk" id="meldeBezirk"></p>
+          <div class="artwahl" id="artWahl"></div>
+          <label class="melde-name" for="meldeText">Was genau ist das Problem?</label>
+          <textarea class="melde-text" id="meldeText" rows="3"
+                    placeholder="Freiwillig. Zum Beispiel: mittags kein Schatten an der Bushaltestelle, der Asphalt staut die Hitze bis abends."></textarea>
+          <button class="knopf-laut" type="button" id="meldenKnopf">
+            <svg class="symbol" aria-hidden="true"><use href="#symbol-meldung"></use></svg>
+            Melden
+          </button>
+          <p class="melde-antwort" id="meldeAntwort"></p>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Zuletzt gemeldet</h2>
+        <ul class="meldungsliste" id="buergerMeldungen"></ul>
+      </div>
+
+      <div class="block">
+        <h2 class="bereich-titel">Geprüfte Gebäude</h2>
+        <div class="kachelfeld" id="gepruefteGebaeude"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Auch hier ist die Reihenfolge Pflicht, und zwar von unten nach oben gedacht:
+       daten.js legt die Listen "bezirke", "bauvorhaben" und "massnahmenKatalog" an.
+       bewertung.js rechnet damit, fasst aber die Seite nie an.
+       adresse.js ist die einzige Datei, die ins Internet greift.
+       speicher.js ist die einzige, die etwas auf dem Gerät ablegt.
+       app.js benutzt alle drei und zeichnet die Oberfläche.
+       Stünde app.js zuerst, wären Daten und Rechnung noch nicht da und das
+       Skript bräche gleich in der ersten Zeile ab. -->
+  <script src="daten.js"></script>
+  <script src="bewertung.js"></script>
+  <script src="adresse.js"></script>
+  <script src="speicher.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

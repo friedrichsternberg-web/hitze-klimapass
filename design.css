@@ -1,0 +1,1162 @@
+/* design.css
+ *
+ * Die Designsprache des Prototyps: Farben, Schrift, Abstände, Radien.
+ * Diese Datei kennt keine Anordnung. Hier steht kein flex, kein grid und
+ * keine Positionierung. Wo etwas hingehört, entscheidet allein style.css.
+ *
+ * Umgekehrt gilt: in style.css steht keine feste Farbe und kein festes Maß.
+ * Alles, was style.css braucht, holt es sich als Variable von hier.
+ */
+
+
+/* ---------------------------------------------------------------
+ * 1. Die Variablen
+ *
+ * Eine CSS-Variable wird mit zwei Bindestrichen angelegt und mit var()
+ * wieder ausgelesen. ":root" ist das gesamte Dokument, die Variablen
+ * gelten dadurch in jeder Datei und in jedem Element.
+ * --------------------------------------------------------------- */
+
+:root {
+
+  /* Grundfarben. Absichtlich warmes Papier und ein Türkis als Akzent,
+     damit der Prototyp nicht nach einer amtlichen Berliner Seite aussieht. */
+  --farbe-grund: #F3EFE7;
+  --farbe-flaeche: #FFFFFF;
+  --farbe-text: #1B1A17;
+  --farbe-text-leise: #6E6A61;
+  --farbe-linie: #E0DACE;
+  --farbe-akzent: #0E7C6B;
+  --farbe-akzent-text: #FFFFFF;
+
+  /* Die Ampel des Klimapasses. Grün heißt Pflicht erfüllt, Gelb bis zu zehn
+     Punkte darunter, Rot alles Weitere. */
+  --farbe-ampel-gruen: #2E8B7A;
+  --farbe-ampel-gelb: #D79A22;
+  --farbe-ampel-rot: #BE3620;
+
+  /* Die Skala für gemeldete Hitze. Stufe 0 ist ein Bezirk, aus dem niemand
+     etwas gemeldet hat. Er bleibt hell und sagt damit "keine Angabe" statt
+     "hier ist es kühl". Das ist ein Unterschied, den die Karte sonst
+     verschweigen würde. */
+  --farbe-melde-0: #E4DED1;
+  --farbe-melde-1: #7FA86A;
+  --farbe-melde-2: #D79A22;
+  --farbe-melde-3: #DD6B1E;
+  --farbe-melde-4: #BE3620;
+
+  /* Schrift. Die Systemschrift wird genommen, damit der Prototyp ohne
+     Internetverbindung genauso aussieht wie mit. Im Seminarraum ist das
+     der sicherere Weg. */
+  --schrift: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --schrift-riesig: 3rem;
+  --schrift-gross: 1.75rem;
+  --schrift-mittel: 1.15rem;
+  --schrift-klein: 0.95rem;
+  --schrift-winzig: 0.8rem;
+
+  --fett-normal: 400;
+  --fett-halb: 600;
+  --fett-voll: 700;
+
+  /* Abstände. Eine einzige Reihe von Werten für das ganze Projekt, damit
+     Abstände sich wiederholen statt jedes Mal neu geraten zu werden. */
+  --abstand-xs: 0.25rem;
+  --abstand-s: 0.5rem;
+  --abstand-m: 1rem;
+  --abstand-l: 1.5rem;
+  --abstand-xl: 2.5rem;
+
+  /* Radien und Linien */
+  --radius-klein: 0.5rem;
+  --radius-gross: 1rem;
+  --radius-rund: 999px;
+  --linie-staerke: 1px;
+  --breite-ampelstreifen: 0.5rem;
+
+  /* Die größte Breite, auf die der Inhalt wachsen darf. Auf einem breiten
+     Bildschirm bleibt der Text sonst schwer zu lesen. */
+  --breite-buehne: 60rem;
+
+  /* Die Spalte für die Namen der sieben Kategorien. Alle Balken beginnen
+     dadurch an derselben Stelle, egal wie lang ein Name ist. */
+  --breite-balkenname: 9.5rem;
+  --hoehe-balken: 0.5rem;
+
+  /* Die leere Kachel zum Anlegen hat keinen Inhalt, der sie auf die Höhe der
+     anderen Kacheln bringt. Deshalb ein Mindestmaß. */
+  --hoehe-kachel: 13rem;
+
+  /* Ab welcher Breite ein Gitter eine weitere Spalte aufmacht. Auch ein
+     Umbruchpunkt ist ein Maß und gehört deshalb hierher und nicht in die
+     Anordnung. */
+  --mindestbreite-kachel: 16rem;
+  --mindestbreite-spalte: 18rem;
+  --mindestbreite-feld: 14rem;
+
+  /* Sichtbarer Rahmen, wenn mit der Tastatur bedient wird. */
+  --fokus-staerke: 2px;
+  --fokus-abstand: 2px;
+
+  /* Formulare und Karte sollen nicht über die ganze Breite laufen. Ein Feld,
+     das doppelt so breit ist wie nötig, liest sich schlechter. */
+  --breite-formular: 38rem;
+  --breite-karte: 34rem;
+
+  /* Größe der Zeichen aus der Symbolsammlung. */
+  --groesse-symbol: 1.1em;
+  --groesse-symbol-gross: 2rem;
+  --groesse-marke: 1.6rem;
+
+  /* Der Ring um die Punktzahl. */
+  --staerke-ring: 10;
+  --groesse-ring-klein: 5.5rem;
+  --groesse-ring-gross: 8rem;
+  --groesse-ring-mittel: 6.5rem;
+  --groesse-siegel: 3rem;
+  --breite-passbalken: 5rem;
+  --mindestbreite-passtabelle: 26rem;
+  --mindestbreite-kennzahl: 11rem;
+
+  /* Schatten. Bisher hatte die Seite gar keine, alles lag flach auf einer
+     Ebene. Drei Stufen reichen: eine ruhende Kachel, eine angefasste, und
+     eine, die deutlich obenauf liegt. */
+  --schatten-ruhe: 0 1px 2px rgba(27, 26, 23, 0.05), 0 2px 8px rgba(27, 26, 23, 0.04);
+  --schatten-angefasst: 0 2px 4px rgba(27, 26, 23, 0.07), 0 8px 20px rgba(27, 26, 23, 0.08);
+  --schatten-obenauf: 0 4px 8px rgba(27, 26, 23, 0.08), 0 16px 40px rgba(27, 26, 23, 0.10);
+
+  /* Übergänge. Kurz für Farben, etwas länger für Bewegung. */
+  --dauer-kurz: 120ms;
+  --dauer-mittel: 240ms;
+  --dauer-lang: 420ms;
+  --verlauf-kurve: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  /* Der Hintergrund der Seite. Zwei sehr weiche Lichtflecken auf dem warmen
+     Papier, oben links kühl, oben rechts warm. Das ist die Klammer der ganzen
+     Idee: kühl gegen heiß. Es ist absichtlich so schwach, dass man es nicht
+     als Farbe wahrnimmt, sondern nur als Tiefe. */
+  --grund-verlauf:
+    radial-gradient(70rem 40rem at 8% -10%, rgba(14, 124, 107, 0.10), transparent 60%),
+    radial-gradient(60rem 36rem at 95% -5%, rgba(190, 54, 32, 0.07), transparent 60%);
+
+  /* Wie weit eine angefasste Kachel sich hebt. */
+  --hub-kachel: -3px;
+
+  /* Wie breit die Illustration im leeren Zustand höchstens wird. */
+  --breite-einstiegsbild: 22rem;
+}
+
+
+/* ---------------------------------------------------------------
+ * 2. Grundlage
+ * --------------------------------------------------------------- */
+
+/* Der Verlauf liegt über der Grundfarbe. "fixed" heißt, er bleibt beim Scrollen
+   stehen, statt mitzulaufen. Dadurch wirkt er wie Licht im Raum und nicht wie
+   ein Muster auf dem Inhalt. */
+body {
+  background-color: var(--farbe-grund);
+  background-image: var(--grund-verlauf);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: var(--farbe-text);
+  font-family: var(--schrift);
+  font-size: var(--schrift-mittel);
+  line-height: 1.45;
+}
+
+
+/* ---------------------------------------------------------------
+ * 3. Der Kopf
+ * --------------------------------------------------------------- */
+
+/* Der Titel ist die größte Schrift der Seite. "clamp" nennt drei Werte:
+   kleinste Größe, Wunschgröße, größte Größe. Die Wunschgröße hängt an der
+   Fensterbreite (vw heißt ein Hundertstel davon). Dadurch wächst der Titel
+   auf dem Beamer mit, ohne dass es eine zweite Regel braucht. */
+.kopf-titel {
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  font-weight: var(--fett-voll);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.kopf-hinweis {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 4. Der Rollenumschalter
+ *
+ * Der aktive Schalter wird über die Klasse "aktiv" umgefärbt. app.js setzt
+ * und entfernt diese Klasse, sonst passiert hier nichts.
+ * --------------------------------------------------------------- */
+
+.umschalter-knopf {
+  background-color: var(--farbe-flaeche);
+  color: var(--farbe-text-leise);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-rund);
+  box-shadow: var(--schatten-ruhe);
+  font-family: var(--schrift);
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+  cursor: pointer;
+  transition:
+    background-color var(--dauer-kurz) linear,
+    color var(--dauer-kurz) linear,
+    border-color var(--dauer-kurz) linear;
+}
+
+.umschalter-knopf.aktiv {
+  background-color: var(--farbe-akzent);
+  color: var(--farbe-akzent-text);
+  border-color: var(--farbe-akzent);
+}
+
+
+/* ---------------------------------------------------------------
+ * 5. Die Bereiche
+ * --------------------------------------------------------------- */
+
+.bereich-titel {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 6. Die Kacheln der Bauvorhaben
+ * --------------------------------------------------------------- */
+
+/* Die Kachel ist ein Knopf. Deshalb müssen Schrift und Ausrichtung
+   ausdrücklich gesetzt werden, sonst nimmt der Browser seine eigene
+   Knopfschrift und zentriert alles. */
+.kachel {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+  font-family: var(--schrift);
+  color: var(--farbe-text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--dauer-mittel) var(--verlauf-kurve),
+    transform var(--dauer-mittel) var(--verlauf-kurve),
+    border-color var(--dauer-kurz) linear;
+}
+
+/* Die Kachel hebt sich, wenn der Zeiger darauf liegt. Der Schatten wächst mit,
+   sonst sähe sie aus, als klebte sie in der Luft. */
+.kachel:hover {
+  box-shadow: var(--schatten-angefasst);
+  transform: translateY(var(--hub-kachel));
+  border-color: var(--ampel-farbe, var(--farbe-akzent));
+}
+
+.kachel-name {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+}
+
+.kachel-bezirk {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+/* Die Punktzahl trägt die Ampelfarbe. Welche das ist, setzt app.js je Kachel
+   als --ampel-farbe. Dadurch braucht es hier keine drei Klassen. */
+.kachel-einheit {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* ---------------------------------------------------------------
+ * 6b. Die Detailansicht eines Bauvorhabens
+ * --------------------------------------------------------------- */
+
+.zurueck {
+  background-color: transparent;
+  color: var(--farbe-akzent);
+  border: none;
+  font-family: var(--schrift);
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+  cursor: pointer;
+}
+
+.detail-name {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+}
+
+.detail-bezirk {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 6c. Die Eingabe: Schieberegler und Stufenwahl
+ * --------------------------------------------------------------- */
+
+.eingabefeld {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.regler-name {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.regler-wert {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-voll);
+  color: var(--farbe-akzent);
+}
+
+/* accent-color färbt Bahn und Griff eines Schiebereglers, ohne dass man ihn
+   selbst nachbauen muss. */
+.regler-schieber {
+  accent-color: var(--farbe-akzent);
+  cursor: pointer;
+}
+
+.wahl-knopf {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text-leise);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-rund);
+  font-family: var(--schrift);
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-halb);
+  cursor: pointer;
+}
+
+.wahl-knopf.aktiv {
+  background-color: var(--farbe-akzent);
+  color: var(--farbe-akzent-text);
+  border-color: var(--farbe-akzent);
+}
+
+
+/* ---------------------------------------------------------------
+ * 6d. Das Ergebnis: Punktzahl, Balken, Maßnahmen
+ * --------------------------------------------------------------- */
+
+/* Der breite Streifen links trägt die Ampelfarbe. Das ist aus der letzten
+   Reihe im Seminarraum besser zu erkennen als ein farbiges Wort. */
+.ergebnis-kopf {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-left: var(--breite-ampelstreifen) solid var(--ampel-farbe);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.ergebnis-punkte {
+  font-size: var(--schrift-riesig);
+  font-weight: var(--fett-voll);
+  line-height: 1;
+  color: var(--ampel-farbe);
+}
+
+.ergebnis-status {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+  color: var(--ampel-farbe);
+}
+
+.ergebnis-schwelle {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.balkenliste {
+  list-style: none;
+}
+
+.balken-name {
+  font-size: var(--schrift-klein);
+}
+
+.balken-bahn {
+  background-color: var(--farbe-linie);
+  border-radius: var(--radius-rund);
+}
+
+.balken-fuellung {
+  background-color: var(--farbe-akzent);
+  border-radius: var(--radius-rund);
+}
+
+.balken-punkte {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  font-weight: var(--fett-halb);
+}
+
+.luecke {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+  color: var(--farbe-ampel-rot);
+}
+
+.erfuellt {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+  color: var(--farbe-ampel-gruen);
+}
+
+.massnahmenliste {
+  list-style: none;
+}
+
+.massnahme {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.massnahme-name {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.massnahme-gewinn {
+  background-color: var(--farbe-akzent);
+  color: var(--farbe-akzent-text);
+  border-radius: var(--radius-rund);
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-voll);
+  text-align: center;
+}
+
+.massnahme-zahlen {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 7. Die Bezirksliste der Verwaltung
+ *
+ * Die Farbe der Stufenmarke kommt aus einer eigenen Variablen namens
+ * --stufe-farbe. app.js setzt sie je Zeile auf eine der fünf Hitzefarben.
+ * Dadurch braucht es hier keine fünf verschiedenen Klassen.
+ * --------------------------------------------------------------- */
+
+/* Die Bauvorhaben mit ihrem Status. Der Streifen links trägt die Ampelfarbe,
+   genau wie im Ergebnis der Bauherr-Ansicht. */
+.statusliste {
+  list-style: none;
+}
+
+.statuszeile {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-left: var(--breite-ampelstreifen) solid var(--ampel-farbe);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.statuszeile-name {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-halb);
+}
+
+.statuszeile-bezirk {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+.statuszeile-punkte {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+  line-height: 1;
+  color: var(--ampel-farbe);
+}
+
+.statuszeile-status {
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-halb);
+  color: var(--ampel-farbe);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* Die Bezirke mit ihren Kennzahlen. */
+.bezirksliste {
+  list-style: none;
+}
+
+.bezirkszeile {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.bezirkszeile-name {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-halb);
+}
+
+.bezirkszeile-zahlen {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+.bezirkszeile-stufe {
+  background-color: var(--stufe-farbe);
+  color: var(--farbe-akzent-text);
+  border-radius: var(--radius-klein);
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+  text-align: center;
+}
+
+
+/* Die eingegangenen Hitzemeldungen. */
+.meldungsliste {
+  list-style: none;
+}
+
+.meldung {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.meldung-ort {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.meldung-art {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text-leise);
+  border-radius: var(--radius-rund);
+  font-size: var(--schrift-winzig);
+  white-space: nowrap;
+}
+
+.meldung-bezirk {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 8. Zwei Knopfarten, die überall gleich aussehen sollen
+ * --------------------------------------------------------------- */
+
+/* Der laute Knopf löst die eigentliche Handlung aus: anlegen, melden. */
+.knopf-laut {
+  background-color: var(--farbe-akzent);
+  color: var(--farbe-akzent-text);
+  border: var(--linie-staerke) solid var(--farbe-akzent);
+  border-radius: var(--radius-rund);
+  font-family: var(--schrift);
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+  cursor: pointer;
+}
+
+/* Der leise Knopf steht daneben und hilft nur, etwa beim Ausfüllen. */
+.knopf-leise {
+  background-color: var(--farbe-flaeche);
+  color: var(--farbe-text-leise);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-rund);
+  font-family: var(--schrift);
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+  cursor: pointer;
+}
+
+
+/* ---------------------------------------------------------------
+ * 9. Die Kachel zum Anlegen
+ * --------------------------------------------------------------- */
+
+/* Gestrichelter Rand und kein Weiß: sie ist ein Angebot, kein Bauvorhaben. */
+.kachel-neu {
+  background-color: transparent;
+  border: var(--linie-staerke) dashed var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  font-family: var(--schrift);
+  cursor: pointer;
+}
+
+.kachel-plus {
+  font-size: var(--schrift-riesig);
+  font-weight: var(--fett-normal);
+  line-height: 1;
+  color: var(--farbe-akzent);
+}
+
+
+/* ---------------------------------------------------------------
+ * 10. Das Formular für ein neues Bauvorhaben
+ * --------------------------------------------------------------- */
+
+.neuformular {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.neufeld-name {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.neufeld-eingabe {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  font-family: var(--schrift);
+  font-size: var(--schrift-mittel);
+}
+
+.beanstandungen {
+  list-style: none;
+}
+
+.beanstandung {
+  color: var(--farbe-ampel-rot);
+  font-size: var(--schrift-klein);
+}
+
+
+/* ---------------------------------------------------------------
+ * 11. Die Karte im Bürgerbereich
+ *
+ * Die Farbe kommt als --stufe-farbe von app.js, genau wie in der Bezirksliste.
+ *
+ * Die Maße hier stehen absichtlich als nackte Zahlen und nicht als rem. In
+ * einem SVG zählen sie im Koordinatensystem der viewBox, sie skalieren also
+ * mit der Karte mit. Ein rem täte das nicht, die Beschriftung bliebe beim
+ * Verkleinern gleich groß und würde aus den Flächen laufen.
+ * --------------------------------------------------------------- */
+
+/* Die Schriftfarbe steht an der Gruppe, die beiden Beschriftungen darin
+   nehmen sie mit currentColor auf. Nur so kann ein Bezirk ohne Meldung
+   dunkle Schrift bekommen, ohne dass es zwei Regeln je Textzeile braucht. */
+.bezirksflaeche {
+  cursor: pointer;
+  color: var(--farbe-akzent-text);
+}
+
+.bezirksflaeche-umriss {
+  fill: var(--stufe-farbe);
+  stroke: var(--farbe-grund);
+  stroke-width: 3;
+}
+
+/* Der gewählte Bezirk bekommt einen dicken dunklen Rand. Eine zweite Farbe wäre
+   hier falsch, die Farbskala gehört schon der Hitze. */
+.bezirksflaeche.gewaehlt .bezirksflaeche-umriss {
+  stroke: var(--farbe-text);
+  stroke-width: 5;
+}
+
+.bezirksflaeche-name {
+  fill: currentColor;
+  font-family: var(--schrift);
+  font-size: 13px;
+  font-weight: var(--fett-halb);
+}
+
+.bezirksflaeche-stufe {
+  fill: currentColor;
+  font-family: var(--schrift);
+  font-size: 30px;
+  font-weight: var(--fett-voll);
+}
+
+
+/* ---------------------------------------------------------------
+ * 12. Das Meldeformular
+ * --------------------------------------------------------------- */
+
+.meldeformular {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.melde-bezirk {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-halb);
+  color: var(--farbe-akzent);
+}
+
+.melde-ort {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  font-family: var(--schrift);
+  font-size: var(--schrift-mittel);
+}
+
+.melde-antwort {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+
+/* ---------------------------------------------------------------
+ * 12b. Die Adresssuche
+ * --------------------------------------------------------------- */
+
+/* Die Rückmeldung der Adresssuche. Im Erfolgsfall leise grau, im Fehlerfall
+   rot. Die Klasse "fehlgeschlagen" setzt app.js. */
+.fundstelle {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+.fundstelle.fehlgeschlagen {
+  color: var(--farbe-ampel-rot);
+}
+
+
+/* ---------------------------------------------------------------
+ * 13. Tastaturbedienung
+ *
+ * :focus-visible greift nur, wenn wirklich mit der Tastatur bedient wird,
+ * nicht bei jedem Mausklick. Ohne diese Regel sieht man beim Durchtabben
+ * nicht, wo man gerade ist.
+ * --------------------------------------------------------------- */
+
+:focus-visible {
+  outline: var(--fokus-staerke) solid var(--farbe-akzent);
+  outline-offset: var(--fokus-abstand);
+}
+
+
+/* ---------------------------------------------------------------
+ * 14. Der Klimapass
+ * --------------------------------------------------------------- */
+
+/* Das Zertifikat liegt sichtbar obenauf. Es ist das Produkt, und es soll sich
+   vom Rest der Seite abheben wie ein Blatt Papier, das jemand hinlegt. */
+.pass {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-obenauf);
+}
+
+.pass-marke {
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-voll);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--farbe-akzent);
+}
+
+.pass-name {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+}
+
+.pass-bezirk {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+/* Der breite Streifen links trägt die Ampelfarbe, wie überall sonst. */
+.pass-urteil {
+  border-left: var(--breite-ampelstreifen) solid var(--ampel-farbe);
+}
+
+.pass-status {
+  font-size: var(--schrift-mittel);
+  font-weight: var(--fett-voll);
+  color: var(--ampel-farbe);
+}
+
+.pass-schwelle {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.pass-flaechen {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.pass-tabelle {
+  border-collapse: collapse;
+  font-size: var(--schrift-klein);
+}
+
+.pass-kopffeld {
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-halb);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--farbe-text-leise);
+  text-align: left;
+  border-bottom: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+.pass-feld {
+  border-bottom: var(--linie-staerke) solid var(--farbe-linie);
+  text-align: left;
+}
+
+.pass-satz {
+  font-size: var(--schrift-klein);
+  font-weight: var(--fett-halb);
+}
+
+.pass-auflagen {
+  list-style: none;
+}
+
+.pass-auflage {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+  border-left: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+.pass-fuss {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  border-top: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+
+/* ---------------------------------------------------------------
+ * 15. Die Symbole
+ *
+ * Der Vorrat oben in index.html wird nie gezeichnet, er ist nur die Quelle.
+ * currentColor heißt: das Zeichen nimmt die Schriftfarbe der Stelle an, an
+ * der es steht. Deshalb braucht es jedes Zeichen nur einmal, egal in wie
+ * vielen Farben es auf der Seite vorkommt.
+ * --------------------------------------------------------------- */
+
+.symbolvorrat {
+  display: none;
+}
+
+/* Jedes Zeichen ist teils mit Fläche (fill) und teils mit Linie (stroke)
+   gezeichnet. Beide stehen im Symbol auf currentColor. Wer die Farbe eines
+   Zeichens ändern will, setzt deshalb color und nicht fill, sonst bleibt die
+   Linie in der alten Farbe stehen. */
+.symbol {
+  fill: currentColor;
+}
+
+.marke {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+
+/* ---------------------------------------------------------------
+ * 16. Der Ring um die Punktzahl
+ *
+ * Die Bahn ist der graue Vollkreis, die Füllung liegt darüber und ist nur so
+ * weit gezeichnet, wie die Punktzahl reicht. Die Drehung um ein Viertel sorgt
+ * dafür, dass sie oben beginnt statt rechts.
+ * --------------------------------------------------------------- */
+
+.punktering-bahn {
+  fill: none;
+  stroke: var(--farbe-linie);
+  stroke-width: var(--staerke-ring);
+}
+
+.punktering-fuellung {
+  fill: none;
+  stroke: var(--ampel-farbe);
+  stroke-width: var(--staerke-ring);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.punktering-zahl {
+  fill: var(--ampel-farbe);
+  font-family: var(--schrift);
+  font-size: 38px;
+  font-weight: var(--fett-voll);
+}
+
+
+/* ---------------------------------------------------------------
+ * 17. Die Kennzahlen im Bürger-Dashboard
+ * --------------------------------------------------------------- */
+
+.kennzahl {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+  box-shadow: var(--schatten-ruhe);
+}
+
+.kennzahl-symbol {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+.kennzahl-zahl {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+  line-height: 1.1;
+}
+
+.kennzahl-wort {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kartenhinweis {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+}
+
+.leerzeile {
+  color: var(--farbe-text-leise);
+  font-size: var(--schrift-klein);
+  border: var(--linie-staerke) dashed var(--farbe-linie);
+  border-radius: var(--radius-gross);
+}
+
+.leerzeile-symbol {
+  color: var(--farbe-linie);
+  fill: currentColor;
+}
+
+/* Ein Bezirk ohne Meldung bekommt dunkle Schrift, sonst wäre Weiß auf Hell
+   nicht zu lesen. */
+.bezirksflaeche.ohne-meldung {
+  color: var(--farbe-text-leise);
+}
+
+.kachel-status {
+  font-size: var(--schrift-winzig);
+  font-weight: var(--fett-halb);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ampel-farbe);
+}
+
+/* Die Auskunftskachel im Bürger-Dashboard ist kein Knopf, sie führt nirgends
+   hin. Deshalb kein Zeigefinger und kein Klickverhalten. */
+.kachel-auskunft {
+  background-color: var(--farbe-flaeche);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-gross);
+}
+
+
+/* ---------------------------------------------------------------
+ * 18. Das Zertifikat
+ * --------------------------------------------------------------- */
+
+.knopf-zertifikat {
+  font-size: var(--schrift-klein);
+}
+
+.pass-marke-zeichen {
+  color: var(--farbe-akzent);
+  fill: currentColor;
+}
+
+.pass-art {
+  font-size: var(--schrift-gross);
+  font-weight: var(--fett-voll);
+  line-height: 1;
+}
+
+.pass-urteiltext {
+  color: var(--farbe-text);
+}
+
+.pass-balken {
+  background-color: var(--farbe-linie);
+  border-radius: var(--radius-rund);
+}
+
+/* Der Akzent und nicht die Ampelfarbe. Die Ampel gilt für das Gesamturteil,
+   eine einzelne Kategorie ist weder bestanden noch durchgefallen. */
+.pass-balken-fuellung {
+  background-color: var(--farbe-akzent);
+  border-radius: var(--radius-rund);
+}
+
+.pass-erfuellt {
+  color: var(--farbe-ampel-gruen);
+}
+
+.pass-feld-name {
+  color: var(--farbe-text);
+}
+
+.pass-kopf {
+  border-bottom: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+
+/* ---------------------------------------------------------------
+ * 19. Gebäudeart, Meldetext und Zurücksetzen
+ * --------------------------------------------------------------- */
+
+.kachel-art {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-akzent);
+  font-weight: var(--fett-halb);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pass-art-gebaeude {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text-leise);
+}
+
+.melde-name {
+  font-size: var(--schrift-winzig);
+  color: var(--farbe-text-leise);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Ein textarea nimmt von Haus aus eine andere Schrift als der Rest der Seite.
+   Deshalb muss sie hier ausdrücklich gesetzt werden. */
+.melde-text {
+  background-color: var(--farbe-grund);
+  color: var(--farbe-text);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  font-family: var(--schrift);
+  font-size: var(--schrift-klein);
+  resize: vertical;
+}
+
+.meldung-beschreibung {
+  font-size: var(--schrift-klein);
+  color: var(--farbe-text);
+  border-left: var(--linie-staerke) solid var(--farbe-linie);
+}
+
+/* Der Knopf zum Zurücksetzen ist absichtlich leise. Er wirft alles weg und
+   soll nicht danach aussehen, als gehöre er zum Ablauf. */
+.zuruecksetzen {
+  background-color: transparent;
+  color: var(--farbe-text-leise);
+  border: var(--linie-staerke) solid var(--farbe-linie);
+  border-radius: var(--radius-rund);
+  font-family: var(--schrift);
+  font-size: var(--schrift-winzig);
+  cursor: pointer;
+}
+
+
+/* ---------------------------------------------------------------
+ * 20. Der leere Zustand
+ *
+ * Die Illustration ist absichtlich blass. Sie soll den Blick halten, solange
+ * nichts da ist, und verschwinden, sobald der erste Inhalt kommt.
+ * --------------------------------------------------------------- */
+
+.einstieg {
+  color: var(--farbe-akzent);
+}
+
+.einstieg-bild {
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+.einstieg-satz {
+  color: var(--farbe-text-leise);
+  font-size: var(--schrift-klein);
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------------
+ * 21. Bewegung
+ *
+ * Ein Wechsel der Ansicht blendet den neuen Inhalt kurz ein, statt ihn
+ * hart hinzuschalten. Der Ring füllt sich nicht sprunghaft, sondern läuft
+ * zur neuen Punktzahl.
+ * --------------------------------------------------------------- */
+
+@keyframes einblenden {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bereich {
+  animation: einblenden var(--dauer-lang) var(--verlauf-kurve);
+}
+
+.ansicht {
+  animation: einblenden var(--dauer-mittel) var(--verlauf-kurve);
+}
+
+/* Die Füllung des Rings läuft zur neuen Länge, statt zu springen. */
+.punktering-fuellung {
+  transition: stroke-dasharray var(--dauer-lang) var(--verlauf-kurve);
+}
+
+/* Wer im Betriebssystem eingestellt hat, dass Bewegung ihn stört, bekommt
+   keine. Das ist keine Feinheit: Bewegung kann bei manchen Menschen Übelkeit
+   und Schwindel auslösen. */
+@media (prefers-reduced-motion: reduce) {
+
+  .bereich {
+    animation: none;
+  }
+
+  .ansicht {
+    animation: none;
+  }
+
+  .kachel {
+    transition: none;
+  }
+
+  .punktering-fuellung {
+    transition: none;
+  }
+
+}

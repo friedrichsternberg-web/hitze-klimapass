@@ -1,0 +1,957 @@
+/* style.css
+ *
+ * Die Anordnung: was steht wo, wie breit, mit welchem Abstand.
+ *
+ * Regel für diese Datei: keine feste Farbe und kein festes Maß. Jeder Wert
+ * kommt als var() aus design.css. Wenn hier jemals "#333" oder "12px" steht,
+ * ist die Trennung kaputt und ein Farbwechsel müsste an zwei Stellen passieren.
+ * Einzige Ausnahme sind die Werte 0 und 100%, die kein Design festlegen,
+ * sondern nur "gar nichts" und "so breit wie der Platz" bedeuten.
+ */
+
+
+/* ---------------------------------------------------------------
+ * 1. Seite
+ * --------------------------------------------------------------- */
+
+body {
+  margin: 0;
+  padding: var(--abstand-l) var(--abstand-m) var(--abstand-xl) var(--abstand-m);
+}
+
+
+/* ---------------------------------------------------------------
+ * 2. Kopf
+ * --------------------------------------------------------------- */
+
+.kopf {
+  max-width: var(--breite-buehne);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: var(--abstand-l);
+}
+
+.kopf-titel {
+  margin: 0;
+}
+
+.kopf-hinweis {
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 3. Rollenumschalter
+ *
+ * Die drei Schalter stehen nebeneinander. "flex-wrap: wrap" sorgt dafür,
+ * dass sie auf einem schmalen Handy umbrechen statt aus dem Bild zu laufen.
+ * --------------------------------------------------------------- */
+
+.umschalter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+  max-width: var(--breite-buehne);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: var(--abstand-l);
+}
+
+.umschalter-knopf {
+  padding: var(--abstand-s) var(--abstand-l);
+}
+
+
+/* ---------------------------------------------------------------
+ * 4. Bühne und Bereiche
+ * --------------------------------------------------------------- */
+
+.buehne {
+  max-width: var(--breite-buehne);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bereich-titel {
+  margin: 0 0 var(--abstand-m) 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 5. Kacheln der Bauvorhaben
+ *
+ * "repeat(auto-fill, minmax(...))" heißt: der Browser legt so viele Spalten
+ * nebeneinander, wie bei der Mindestbreite aus design.css hineinpassen. Auf
+ * dem Handy wird daraus von allein eine einzige Spalte, ohne zweite Regel.
+ *
+ * auto-fill und nicht auto-fit: auto-fit würde leere Spalten einklappen und
+ * eine einzelne Kachel über die ganze Breite ziehen. Am Anfang steht aber nur
+ * die Kachel zum Anlegen da, und die soll die Größe der anderen haben.
+ * --------------------------------------------------------------- */
+
+.kachelfeld {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--mindestbreite-kachel), 1fr));
+  gap: var(--abstand-m);
+}
+
+/* Die Kachel wird selbst zu einer Spalte. Nur dadurch kann die Zahl weiter
+   unten mit "margin-top: auto" an den unteren Rand rutschen. */
+.kachel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--abstand-l);
+}
+
+/* Die Inhalte der Kachel sind span, weil in einem Knopf keine Überschriften
+   stehen dürfen. span steht von Haus aus in der Zeile, deshalb bekommt hier
+   jedes einzeln ein display: block. */
+.kachel-name {
+  display: block;
+  margin: 0;
+}
+
+.kachel-bezirk {
+  display: block;
+  margin: var(--abstand-xs) 0 var(--abstand-l) 0;
+}
+
+.kachel-einheit {
+  display: block;
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+/* "auto" oben heißt: nimm allen übrigen Platz als Abstand. Der Ring steht
+   dadurch in jeder Kachel auf gleicher Höhe, auch wenn ein Name zwei Zeilen
+   braucht und ein anderer nur eine. */
+.punktering-klein {
+  display: block;
+  width: var(--groesse-ring-klein);
+  height: var(--groesse-ring-klein);
+  margin: auto auto 0 auto;
+}
+
+.kachel-status {
+  display: block;
+  margin: var(--abstand-s) 0 0 0;
+  text-align: center;
+}
+
+.kachel-auskunft {
+  display: flex;
+  flex-direction: column;
+  padding: var(--abstand-l);
+}
+
+
+/* ---------------------------------------------------------------
+ * 5b. Detailansicht: Kopf und zwei Spalten
+ * --------------------------------------------------------------- */
+
+.zurueck {
+  display: block;
+  margin: 0 0 var(--abstand-m) 0;
+  padding: 0;
+}
+
+.detail-name {
+  margin: 0;
+}
+
+.detail-bezirk {
+  margin: var(--abstand-xs) 0 var(--abstand-l) 0;
+}
+
+/* Links die Eingabe, rechts das Ergebnis. Wird es zu schmal für zwei Spalten,
+   wird daraus von allein eine. */
+.detail-spalten {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-spalte), 1fr));
+  gap: var(--abstand-l);
+  align-items: start;
+}
+
+
+/* ---------------------------------------------------------------
+ * 5c. Die Eingabe
+ *
+ * Jeder Regler ist ein kleines Gitter: oben Name und Wert nebeneinander,
+ * darunter die Bahn über die ganze Breite. "1 / -1" heißt von der ersten
+ * bis zur letzten Spalte.
+ * --------------------------------------------------------------- */
+
+.eingabefeld {
+  padding: var(--abstand-l);
+}
+
+.regler {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: var(--abstand-xs);
+  margin-bottom: var(--abstand-l);
+}
+
+.regler-name {
+  margin: 0;
+}
+
+.regler-wert {
+  margin: 0;
+}
+
+.regler-schieber {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+}
+
+.stufenwahl {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+.wahl-knopf {
+  padding: var(--abstand-xs) var(--abstand-m);
+}
+
+
+/* ---------------------------------------------------------------
+ * 5d. Das Ergebnis
+ * --------------------------------------------------------------- */
+
+/* Der Ring links, der Text rechts daneben. */
+.ergebnis-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-l);
+  padding: var(--abstand-l);
+  margin-bottom: var(--abstand-l);
+}
+
+.punktering-mittel {
+  width: var(--groesse-ring-mittel);
+  height: var(--groesse-ring-mittel);
+  flex-shrink: 0;
+}
+
+.ergebnis-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+}
+
+.ergebnis-status {
+  margin: 0;
+}
+
+.ergebnis-schwelle {
+  margin: 0;
+}
+
+/* Name, Bahn und Punktzahl in einer Zeile. Die Bahn nimmt den Rest. */
+.balkenliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0 0 var(--abstand-l) 0;
+  padding: 0;
+}
+
+.balken {
+  display: grid;
+  grid-template-columns: var(--breite-balkenname) 1fr auto;
+  align-items: center;
+  gap: var(--abstand-s);
+}
+
+.balken-name {
+  margin: 0;
+}
+
+.balken-bahn {
+  display: block;
+  height: var(--hoehe-balken);
+  width: 100%;
+}
+
+.balken-fuellung {
+  display: block;
+  height: 100%;
+}
+
+.balken-punkte {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.luecke {
+  margin: 0 0 var(--abstand-s) 0;
+}
+
+.erfuellt {
+  margin: 0;
+}
+
+.massnahmenliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+/* Name und Punktgewinn in der ersten Zeile, die Zahlen darunter über die
+   ganze Breite. */
+.massnahme {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--abstand-xs) var(--abstand-s);
+  padding: var(--abstand-s) var(--abstand-m);
+}
+
+.massnahme-name {
+  margin: 0;
+}
+
+.massnahme-gewinn {
+  margin: 0;
+  padding: 0 var(--abstand-s);
+}
+
+.massnahme-zahlen {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 6. Bezirksliste der Verwaltung
+ * --------------------------------------------------------------- */
+
+/* Die drei Blöcke des Dashboards untereinander. */
+.block {
+  margin-bottom: var(--abstand-xl);
+}
+
+/* Die Bauvorhaben mit Status.
+   Links Name und Bezirk untereinander, rechts Punktzahl und Status. */
+.statusliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.statuszeile {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: var(--abstand-m);
+  padding: var(--abstand-m) var(--abstand-l);
+}
+
+.statuszeile-name {
+  display: block;
+  margin: 0;
+}
+
+.statuszeile-bezirk {
+  display: block;
+  margin: 0;
+}
+
+.statuszeile-punkte {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  text-align: right;
+}
+
+.statuszeile-status {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  text-align: right;
+}
+
+/* Die Bezirke mit ihren Kennzahlen.
+   Links Name und Kennzahlen untereinander, rechts die Stufenmarke über
+   beide Zeilen. */
+.bezirksliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.bezirkszeile {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: var(--abstand-m);
+  padding: var(--abstand-m) var(--abstand-l);
+}
+
+.bezirkszeile-name {
+  display: block;
+  margin: 0;
+}
+
+.bezirkszeile-zahlen {
+  display: block;
+  margin: 0;
+}
+
+/* Feste Breite und Höhe machen aus der Marke ein Quadrat, unabhängig davon,
+   ob die Zahl eine 1 oder eine 5 ist. "1 / 3" heißt über beide Zeilen. */
+.bezirkszeile-stufe {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: var(--abstand-xl);
+  line-height: var(--abstand-xl);
+  margin: 0;
+}
+
+/* Die Meldungen.
+   Oben Ort und Art nebeneinander, darunter Bezirk und Datum. */
+.meldungsliste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.meldung {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--abstand-xs) var(--abstand-m);
+  padding: var(--abstand-s) var(--abstand-l);
+}
+
+.meldung-ort {
+  margin: 0;
+}
+
+.meldung-art {
+  margin: 0;
+  padding: 0 var(--abstand-s);
+}
+
+.meldung-bezirk {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 7. Platzhalter im Bürgerbereich
+ * --------------------------------------------------------------- */
+
+.platzhalter {
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 7. Knopfreihen
+ * --------------------------------------------------------------- */
+
+.knopfreihe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+}
+
+.knopf-laut {
+  padding: var(--abstand-s) var(--abstand-l);
+}
+
+.knopf-leise {
+  padding: var(--abstand-s) var(--abstand-l);
+}
+
+
+/* ---------------------------------------------------------------
+ * 8. Die Kachel zum Anlegen
+ *
+ * Sie steht im selben Gitter wie die anderen Kacheln, ist aber leer und
+ * zentriert ihren Inhalt in der Mitte.
+ * --------------------------------------------------------------- */
+
+.kachel-neu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--abstand-s);
+  padding: var(--abstand-l);
+  min-height: var(--hoehe-kachel);
+}
+
+.kachel-plus {
+  display: block;
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 9. Das Formular für ein neues Bauvorhaben
+ *
+ * Zwei Spalten auf breiten Bildschirmen, eine auf dem Handy.
+ * --------------------------------------------------------------- */
+
+.neuformular {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-feld), 1fr));
+  gap: var(--abstand-m);
+  padding: var(--abstand-l);
+  max-width: var(--breite-formular);
+}
+
+.neufeld {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+}
+
+.neufeld-name {
+  margin: 0;
+}
+
+.neufeld-eingabe {
+  width: 100%;
+  padding: var(--abstand-s);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Beanstandungen und Knöpfe laufen über die ganze Breite, egal wie viele
+   Spalten das Gitter gerade hat. */
+.beanstandungen {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+  margin: 0;
+  padding: 0;
+}
+
+.beanstandung {
+  margin: 0;
+}
+
+.knopfreihe {
+  grid-column: 1 / -1;
+}
+
+
+/* ---------------------------------------------------------------
+ * 10. Die Karte
+ * --------------------------------------------------------------- */
+
+/* Ein SVG mit viewBox passt sich der Breite an und behält sein Seitenverhältnis
+   von allein. Es braucht deshalb nur eine Höchstbreite. */
+.karte {
+  display: block;
+  width: 100%;
+  max-width: var(--breite-karte);
+}
+
+
+/* ---------------------------------------------------------------
+ * 11. Das Meldeformular
+ * --------------------------------------------------------------- */
+
+.meldeformular {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--abstand-m);
+  padding: var(--abstand-l);
+  max-width: var(--breite-formular);
+}
+
+.melde-bezirk {
+  margin: 0;
+}
+
+.melde-ort {
+  padding: var(--abstand-s);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.artwahl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+}
+
+.melde-antwort {
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 12. Die Leiste über Detailansicht und Klimapass
+ * --------------------------------------------------------------- */
+
+.kopfleiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--abstand-m);
+  margin-bottom: var(--abstand-m);
+}
+
+
+/* ---------------------------------------------------------------
+ * 13. Der Klimapass
+ * --------------------------------------------------------------- */
+
+.pass {
+  padding: var(--abstand-xl);
+  max-width: var(--breite-formular);
+}
+
+.pass-marke {
+  margin: 0;
+}
+
+.pass-name {
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+.pass-bezirk {
+  margin: var(--abstand-xs) 0 var(--abstand-l) 0;
+}
+
+/* Der Ring links, der Text rechts daneben. */
+.pass-urteil {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-l);
+  padding: var(--abstand-l) 0 var(--abstand-l) var(--abstand-m);
+  margin-bottom: var(--abstand-l);
+}
+
+.pass-schwelle {
+  margin: 0;
+}
+
+.pass-flaechen {
+  margin: 0 0 var(--abstand-l) 0;
+}
+
+/* Der Kasten darf scrollen, die Tabelle darin behält ihre Mindestbreite.
+   Ohne "min-width" würde die Tabelle sich zusammenquetschen, statt den
+   Kasten zum Scrollen zu bringen. */
+.pass-tabellenkasten {
+  overflow-x: auto;
+  margin-bottom: var(--abstand-l);
+}
+
+.pass-tabelle {
+  width: 100%;
+  min-width: var(--mindestbreite-passtabelle);
+  margin: 0;
+}
+
+.pass-kopffeld {
+  padding: var(--abstand-xs) var(--abstand-s) var(--abstand-xs) 0;
+}
+
+.pass-feld {
+  padding: var(--abstand-xs) var(--abstand-s) var(--abstand-xs) 0;
+}
+
+.pass-satz {
+  margin: 0 0 var(--abstand-s) 0;
+}
+
+.pass-auflagen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: 0;
+}
+
+.pass-auflage {
+  padding-left: var(--abstand-m);
+}
+
+.pass-fuss {
+  margin: var(--abstand-xl) 0 0 0;
+  padding: var(--abstand-m) 0 0 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 14. Die Adresssuche
+ *
+ * Eingabefeld und Suchknopf nebeneinander. Auf einem schmalen Bildschirm
+ * rutscht der Knopf unter das Feld.
+ * --------------------------------------------------------------- */
+
+.suchzeile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--abstand-s);
+  width: 100%;
+}
+
+/* Das Adressfeld nimmt den Platz, der Knopf nur so viel wie er braucht.
+   Die Klasse tragen beide Adressfelder, das im Anlegen-Formular und das in
+   der Meldung. "min-width: 0" ist nötig, damit das Feld auch wirklich
+   schrumpfen darf, sonst bleibt es so breit wie sein Platzhaltertext und
+   drängt den Knopf in die nächste Zeile. */
+.suchfeld {
+  flex: 1;
+  min-width: 0;
+}
+
+.fundstelle {
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+/* Die Adresse steht über die ganze Breite des Formulargitters, weil sie
+   länger ist als eine Zahl. */
+.neufeld-breit {
+  grid-column: 1 / -1;
+}
+
+
+/* ---------------------------------------------------------------
+ * 15. Symbole
+ *
+ * Ein Symbol steht in der Zeile neben seinem Text und wird an der Schrift
+ * ausgerichtet, nicht an der Grundlinie. Sonst hängt es unter dem Text.
+ * --------------------------------------------------------------- */
+
+.symbol {
+  display: inline-block;
+  width: var(--groesse-symbol);
+  height: var(--groesse-symbol);
+  vertical-align: -0.15em;
+  margin-right: var(--abstand-xs);
+  flex-shrink: 0;
+}
+
+/* Die Wortmarke misst in em statt in rem. em ist die Schriftgröße der Stelle,
+   an der ein Element steht. Weil der Titel mit der Fensterbreite wächst,
+   wächst das Zeichen daneben von allein mit. */
+.marke {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.12em;
+  margin-right: var(--abstand-s);
+}
+
+
+/* ---------------------------------------------------------------
+ * 16. Die Kennzahlenreihe im Bürger-Dashboard
+ * --------------------------------------------------------------- */
+
+.kennzahlreihe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--mindestbreite-kennzahl), 1fr));
+  gap: var(--abstand-m);
+  margin-bottom: var(--abstand-xl);
+}
+
+.kennzahl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+  padding: var(--abstand-l);
+}
+
+.kennzahl-symbol {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+  margin-bottom: var(--abstand-s);
+}
+
+.kennzahl-zahl {
+  display: block;
+}
+
+.kennzahl-wort {
+  display: block;
+}
+
+.kartenhinweis {
+  margin: var(--abstand-s) 0 0 0;
+  max-width: var(--breite-formular);
+}
+
+.leerzeile {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-s);
+  margin: 0;
+  padding: var(--abstand-l);
+  list-style: none;
+}
+
+.leerzeile-symbol {
+  width: var(--groesse-symbol-gross);
+  height: var(--groesse-symbol-gross);
+  flex-shrink: 0;
+}
+
+
+/* ---------------------------------------------------------------
+ * 17. Das Zertifikat
+ * --------------------------------------------------------------- */
+
+.pass-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--abstand-m);
+  padding-bottom: var(--abstand-m);
+  margin-bottom: var(--abstand-l);
+}
+
+.pass-marke-zeichen {
+  width: var(--groesse-siegel);
+  height: var(--groesse-siegel);
+  flex-shrink: 0;
+}
+
+.pass-kopftext {
+  display: flex;
+  flex-direction: column;
+}
+
+.pass-art {
+  margin: 0;
+}
+
+/* Der Ring links, der Text rechts daneben. */
+.pass-urteiltext {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand-xs);
+}
+
+.punktering-gross {
+  width: var(--groesse-ring-gross);
+  height: var(--groesse-ring-gross);
+  flex-shrink: 0;
+}
+
+.pass-status {
+  margin: 0;
+}
+
+.pass-balken {
+  display: block;
+  width: var(--breite-passbalken);
+  height: var(--hoehe-balken);
+}
+
+.pass-balken-fuellung {
+  display: block;
+  height: 100%;
+}
+
+.pass-feld-name {
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------
+ * 18. Gebäudeart, Meldetext und Zurücksetzen
+ * --------------------------------------------------------------- */
+
+.kachel-art {
+  display: block;
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+.pass-art-gebaeude {
+  margin: var(--abstand-xs) 0 0 0;
+}
+
+.melde-name {
+  margin: 0;
+}
+
+.melde-text {
+  width: 100%;
+  padding: var(--abstand-s);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.meldung-beschreibung {
+  grid-column: 1 / -1;
+  margin: var(--abstand-xs) 0 0 0;
+  padding-left: var(--abstand-s);
+}
+
+/* Der Kopf trägt jetzt zwei Dinge nebeneinander: den Text links, den leisen
+   Knopf rechts. */
+.kopf {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  column-gap: var(--abstand-m);
+}
+
+.kopf-titel {
+  grid-column: 1;
+}
+
+.kopf-hinweis {
+  grid-column: 1;
+}
+
+.zuruecksetzen {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  padding: var(--abstand-xs) var(--abstand-m);
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------
+ * 19. Der leere Zustand
+ *
+ * Die Illustration steht über die ganze Breite des Gitters, damit sie nicht
+ * in einer Kachelspalte klemmt.
+ * --------------------------------------------------------------- */
+
+.einstieg {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--abstand-m);
+  margin: 0 0 var(--abstand-l) 0;
+  padding: var(--abstand-l) 0;
+  list-style: none;
+}
+
+.einstieg-bild {
+  display: block;
+  width: 100%;
+  max-width: var(--breite-einstiegsbild);
+  height: auto;
+}
+
+.einstieg-satz {
+  margin: 0;
+  max-width: var(--breite-formular);
+}
