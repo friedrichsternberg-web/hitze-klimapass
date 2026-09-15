@@ -166,6 +166,15 @@ const gebaeudearten = [
 ];
 
 
+// Wie dicht die Umgebung bebaut ist. Davon hängt die Pflichtschwelle ab, die
+// Zahlen dazu stehen in bewertung.js. Die Skizze zeichnet die Nachbarn danach.
+const lagen = [
+  { kennung: "innenstadt",    name: "Innenstadt, dicht bebaut" },
+  { kennung: "stadtquartier", name: "Stadtquartier" },
+  { kennung: "stadtrand",     name: "Stadtrand, locker bebaut" }
+];
+
+
 // Die Arten von Hitzemeldungen. "symbol" zeigt auf ein Zeichen aus der
 // Symbolsammlung oben in index.html.
 const meldungsarten = [
@@ -187,6 +196,8 @@ const beispielBauvorhaben = {
   name: "Wohnhaus Hermannstraße",
   adresse: "Hermannstraße 12, 12049 Berlin",
   gebaeudeart: "wohngebaeude",
+  lage: "innenstadt",
+  geschosse: 5,
   grundstuecksflaeche: 2400,
   dachflaeche: 1100,
   fassadenflaeche: 3100,

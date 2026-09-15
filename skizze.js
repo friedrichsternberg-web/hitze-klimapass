@@ -17,7 +17,7 @@
 const SKIZZE_BREITE = 360;
 const SKIZZE_HOEHE = 230;
 const SKIZZE_BODEN = 170;
-const SKIZZE_RAND = 20;
+const SKIZZE_RAND = 36;
 const SKIZZE_GESCHOSSHOEHE = 20;
 
 // Wie groß eine Baumkrone gezeichnet wird, je Kronengröße.
@@ -25,6 +25,9 @@ const KRONENRADIUS = { klein: 7, mittel: 10, gross: 14 };
 
 // Mehr Bäume als das passen nicht ins Bild, die Zahl steht dann daneben.
 const HOECHSTENS_BAEUME = 9;
+
+// Mehr Geschosse als das werden nicht gezeichnet, die Zahl steht dann am Dach.
+const HOECHSTENS_GESCHOSSE = 9;
 
 
 // Begrenzt eine Zahl auf einen Bereich. Kommt hier oft vor.
@@ -43,10 +46,14 @@ function skizzenmasse(vorhaben) {
   const gebaeudeBreite = Math.round(gesamt * dachanteil);
   const freiBreite = gesamt - gebaeudeBreite;
 
-  // Der Umfang eines quadratischen Gebäudes mit dieser Dachfläche, daraus die
-  // Geschosse bei 3,2 Metern Höhe je Geschoss.
+  // Die Geschosse gibt der Bauherr an. Fehlt die Angabe, wird sie aus dem
+  // Umfang eines quadratischen Gebäudes mit dieser Dachfläche geschätzt,
+  // bei 3,2 Metern Höhe je Geschoss.
   const umfang = 4 * Math.sqrt(dach);
-  const geschosse = begrenze(Math.round(vorhaben.fassadenflaeche / (umfang * 3.2)), 1, 6);
+  const angegeben = Math.round(vorhaben.geschosse) || Math.round(vorhaben.fassadenflaeche / (umfang * 3.2));
+  const geschosse = begrenze(angegeben, 1, HOECHSTENS_GESCHOSSE);
+  // Viele Geschosse werden flacher gezeichnet, sonst wächst das Haus aus dem Bild.
+  const geschosshoehe = geschosse > 6 ? 14 : SKIZZE_GESCHOSSHOEHE;
 
   // Das Gebäude steht etwas rechts der Mitte, links ist mehr Freifläche.
   const linksFrei = Math.round(freiBreite * 0.55);
@@ -56,8 +63,10 @@ function skizzenmasse(vorhaben) {
   return {
     gebaeudeX: gebaeudeX,
     gebaeudeBreite: gebaeudeBreite,
-    gebaeudeHoehe: geschosse * SKIZZE_GESCHOSSHOEHE + 8,
+    gebaeudeHoehe: geschosse * geschosshoehe + 8,
     geschosse: geschosse,
+    geschosshoehe: geschosshoehe,
+    geschosseGesamt: Math.round(vorhaben.geschosse) || geschosse,
     linksFrei: linksFrei,
     rechtsFrei: freiBreite - linksFrei,
     rechtsX: gebaeudeX + gebaeudeBreite,
@@ -180,10 +189,10 @@ function zeichneSkizzenboden(masse, antworten) {
 // Fenster eines Geschosses je nach Gebäudeart. Wohnen kleine Fenster mit
 // Fensterbank und Balkonen, Büro breite Glasbänder mit Sprossen, öffentlich
 // hohe Fenster. Die Zahl ergibt sich aus der Breite.
-function zeichneFensterreihe(x, breite, y, gebaeudeart, geschoss) {
+function zeichneFensterreihe(x, breite, y, gebaeudeart, geschoss, geschosshoehe) {
   const breit = gebaeudeart === "buero" || gebaeudeart === "oeffentlich";
   const fensterBreite = breit ? 12 : 7;
-  const fensterHoehe = breit ? 10 : 9;
+  const fensterHoehe = Math.round((breit ? 0.5 : 0.45) * (geschosshoehe || SKIZZE_GESCHOSSHOEHE));
   const abstand = breit ? 16 : 14;
   let teile = "";
 
@@ -311,10 +320,14 @@ function zeichneSkizzenfluegel(x, breite, masse, antworten, gebaeudeart) {
   let teile = `<rect class="${wandklasse}" x="${x}" y="${oben}" width="${breite}" height="${masse.gebaeudeHoehe}"></rect>`;
 
   for (let geschoss = 0; geschoss < masse.geschosse; geschoss = geschoss + 1) {
-    const y = SKIZZE_BODEN - (geschoss + 1) * SKIZZE_GESCHOSSHOEHE + 6;
+    const y = SKIZZE_BODEN - (geschoss + 1) * masse.geschosshoehe + Math.round(masse.geschosshoehe * 0.3);
     teile = teile + (geschoss === 0
       ? zeichneErdgeschoss(x, breite, y, gebaeudeart)
-      : zeichneFensterreihe(x, breite, y, gebaeudeart, geschoss));
+      : zeichneFensterreihe(x, breite, y, gebaeudeart, geschoss, masse.geschosshoehe));
+  }
+  // Mehr Geschosse als gezeichnet: die Zahl steht am Dach.
+  if (masse.geschosseGesamt > masse.geschosse) {
+    teile = teile + `<text class="skizze-text" x="${x + breite / 2}" y="${oben - 12}" text-anchor="middle">${masse.geschosseGesamt} Geschosse</text>`;
   }
 
   if (antworten.dachform === "geneigt") {
@@ -488,6 +501,49 @@ function zeichneWasser(masse, antworten) {
 }
 
 
+// Die Nachbarschaft je Lage, links und rechts außerhalb des Grundstücks.
+// Innenstadt: hohe Blöcke dicht an der Grenze. Stadtquartier: mittlere Häuser.
+// Stadtrand: kleine Häuser mit Giebel und ein Baum. Dazu die Grundstücksgrenze
+// als gestrichelte Linie, damit klar ist, was zum Vorhaben gehört.
+function zeichneUmgebung(masse, lage) {
+  const breite = SKIZZE_RAND - 6;
+  let hoehe = Math.round(masse.gebaeudeHoehe * 0.6);
+  if (lage === "innenstadt") {
+    hoehe = Math.max(masse.gebaeudeHoehe + 10, 70);
+  } else if (lage === "stadtrand") {
+    hoehe = 26;
+  }
+  const oben = SKIZZE_BODEN - hoehe;
+  let teile = "";
+
+  [2, SKIZZE_BREITE - breite - 2].forEach(function (x) {
+    teile = teile + `<rect class="skizze-nachbar" x="${x}" y="${oben}" width="${breite}" height="${hoehe}"></rect>`;
+    if (lage === "stadtrand") {
+      teile = teile + `<polygon class="skizze-nachbar" points="${x - 2},${oben} ${x + breite / 2},${oben - 12} ${x + breite + 2},${oben}"></polygon>
+                       <circle class="skizze-nachbarbaum" cx="${x + breite / 2}" cy="${oben - 24}" r="8"></circle>`;
+    } else {
+      for (let fy = oben + 6; fy < SKIZZE_BODEN - 8; fy = fy + 12) {
+        for (let fx = x + 4; fx + 5 < x + breite; fx = fx + 9) {
+          teile = teile + `<rect class="skizze-nachbarfenster" x="${fx}" y="${fy}" width="5" height="6"></rect>`;
+        }
+      }
+    }
+  });
+
+  return teile + `<path class="skizze-grenze" d="M${SKIZZE_RAND} ${SKIZZE_BODEN - 4}v14M${SKIZZE_BREITE - SKIZZE_RAND} ${SKIZZE_BODEN - 4}v14"></path>`;
+}
+
+
+// Ein Mensch neben der Tür, als Maßstab. Kopf, Rumpf, Beine, mehr braucht es
+// nicht, damit das Auge die Gebäudehöhe einordnen kann.
+function zeichneMensch(x) {
+  return `
+    <circle class="skizze-mensch" cx="${x}" cy="${SKIZZE_BODEN - 15}" r="2.6"></circle>
+    <path class="skizze-mensch-linie" d="M${x} ${SKIZZE_BODEN - 12}v7M${x - 3} ${SKIZZE_BODEN - 9}h6M${x} ${SKIZZE_BODEN - 5}l-2.5 5M${x} ${SKIZZE_BODEN - 5}l2.5 5"></path>
+  `;
+}
+
+
 // Setzt alles zusammen. Gibt das fertige SVG als Text zurück.
 function zeichneSkizze(vorhaben) {
   const antworten = vorhaben.antworten || leereAntworten();
@@ -497,9 +553,11 @@ function zeichneSkizze(vorhaben) {
     <svg class="skizze" viewBox="0 0 ${SKIZZE_BREITE} ${SKIZZE_HOEHE}" role="img"
          aria-label="Schematische Skizze des Bauvorhabens">
       ${zeichneSonne()}
+      ${zeichneUmgebung(masse, vorhaben.lage)}
       ${zeichneSkizzenboden(masse, antworten)}
       ${zeichneWasser(masse, antworten)}
       ${zeichneSkizzengebaeude(masse, antworten, vorhaben.gebaeudeart)}
+      ${zeichneMensch(masse.gebaeudeX - 7)}
       ${zeichnePergola(masse, antworten)}
       ${zeichneSkizzenbaeume(masse, antworten)}
     </svg>

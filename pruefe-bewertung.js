@@ -92,7 +92,12 @@ pruefe("Bauvorhaben auf allen Zielwerten", 100, voll.gesamtPunkte);
 print("");
 print("Pflichtschwelle");
 
-pruefe("gilt für ganz Berlin", 60, schwelleFuer());
+pruefe("ohne Lage", 60, schwelleFuer());
+pruefe("Innenstadt", 70, schwelleFuer("innenstadt"));
+pruefe("Stadtquartier", 60, schwelleFuer("stadtquartier"));
+pruefe("Stadtrand", 55, schwelleFuer("stadtrand"));
+pruefe("Innenstadt zieht in die Bewertung ein", 70,
+  bewerte(Object.assign(testVorhaben(alleZielwerteErreicht), { lage: "innenstadt" })).schwelle);
 
 print("");
 print("Ampel");
@@ -197,6 +202,8 @@ function entwurf(aenderungen) {
     name: "Neubau",
     bezirkKennung: "testbezirk",
     gebaeudeart: "wohngebaeude",
+    lage: "stadtquartier",
+    geschosse: 4,
     grundstuecksflaeche: 2000,
     dachflaeche: 800,
     fassadenflaeche: 2500,
@@ -209,6 +216,8 @@ pruefe("sauberer Entwurf", 0, pruefeBauvorhaben(entwurf({})).length);
 pruefe("ohne Namen", 1, pruefeBauvorhaben(entwurf({ name: "" })).length);
 pruefe("ohne Bezirk", 1, pruefeBauvorhaben(entwurf({ bezirkKennung: "" })).length);
 pruefe("ohne Gebäudeart", 1, pruefeBauvorhaben(entwurf({ gebaeudeart: "" })).length);
+pruefe("ohne Lage", 1, pruefeBauvorhaben(entwurf({ lage: "" })).length);
+pruefe("null Geschosse", 1, pruefeBauvorhaben(entwurf({ geschosse: 0 })).length);
 pruefe("Freifläche null", 1, pruefeBauvorhaben(entwurf({ freiflaeche: 0 })).length);
 pruefe("Dach und Freifläche zu groß", 1,
   pruefeBauvorhaben(entwurf({ dachflaeche: 1500, freiflaeche: 1000 })).length);

@@ -175,6 +175,8 @@
   --skizze-blatt-dunkel: #3C7F55;
   --skizze-holz: #8A6A46;
   --skizze-tuer: #5A4636;
+  --skizze-nachbar: #DDD6C8;
+  --skizze-mensch: #1B1A17;
 }
 
 
@@ -1308,6 +1310,14 @@ body {
 .skizze-rohr { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
 .skizze-mulde { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
 .skizze-sicker { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.2; stroke-dasharray: 2 2; }
+
+/* Umgebung und Maßstab */
+.skizze-nachbar { fill: var(--skizze-nachbar); }
+.skizze-nachbarfenster { fill: var(--skizze-wand-hell); opacity: 0.9; }
+.skizze-nachbarbaum { fill: var(--skizze-blatt-hell); opacity: 0.6; }
+.skizze-grenze { stroke: var(--skizze-linie); stroke-width: 1; stroke-dasharray: 3 2; opacity: 0.6; }
+.skizze-mensch { fill: var(--skizze-mensch); }
+.skizze-mensch-linie { fill: none; stroke: var(--skizze-mensch); stroke-width: 1.6; stroke-linecap: round; }
 
 /* Pergola und Segel */
 .skizze-segel { fill: var(--skizze-segel); }

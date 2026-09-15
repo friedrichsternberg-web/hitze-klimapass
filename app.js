@@ -584,9 +584,11 @@ function oeffneDetail(vorhabenKennung) {
   document.getElementById("detailName").textContent = aktuellesVorhaben.name;
   const bezirksangabe = bezirk ? bezirk.name : "Bezirk unbekannt";
   const artname = nameDerGebaeudeart(aktuellesVorhaben.gebaeudeart);
+  const lagename = nameDerLage(aktuellesVorhaben.lage);
   document.getElementById("detailBezirk").textContent =
     (aktuellesVorhaben.adresse ? aktuellesVorhaben.adresse + ", " : "")
-    + bezirksangabe + (artname ? ", " + artname : "");
+    + bezirksangabe + (artname ? ", " + artname : "")
+    + (lagename ? ", " + lagename : "");
 
   aktualisiereEingabe(aktuellesVorhaben);
   zeichneEingabe(aktuellesVorhaben);
@@ -892,7 +894,7 @@ function zeichnePass(vorhaben) {
       <svg class="symbol" aria-hidden="true"><use href="#symbol-ort"></use></svg>
       ${vorhaben.adresse || ""}${bezirk ? ", " + bezirk.name : ""}
     </p>
-    <p class="pass-art-gebaeude">${nameDerGebaeudeart(vorhaben.gebaeudeart)}</p>
+    <p class="pass-art-gebaeude">${nameDerGebaeudeart(vorhaben.gebaeudeart)}${vorhaben.geschosse ? ", " + vorhaben.geschosse + " Geschosse" : ""}${vorhaben.lage ? ", " + nameDerLage(vorhaben.lage) : ""}</p>
 
     <div class="pass-urteil" style="--ampel-farbe: ${ampelFarbe(ergebnis.ampel)}">
       ${zeichnePunktering(ergebnis.gesamtPunkte, ergebnis.ampel, "punktering-gross")}
@@ -1036,6 +1038,21 @@ function fuelleArtAuswahl() {
 }
 
 
+function fuelleLageAuswahl() {
+  document.getElementById("neuLage").innerHTML = lagen.map(function (lage) {
+    return `<option value="${lage.kennung}">${lage.name}</option>`;
+  }).join("");
+}
+
+
+function nameDerLage(kennung) {
+  const lage = lagen.find(function (eintrag) {
+    return eintrag.kennung === kennung;
+  });
+  return lage ? lage.name : "";
+}
+
+
 function findeGebaeudeart(kennung) {
   return gebaeudearten.find(function (art) {
     return art.kennung === kennung;
@@ -1054,6 +1071,8 @@ function liesEntwurf() {
     name: document.getElementById("neuName").value.trim(),
     adresse: document.getElementById("neuAdresse").value.trim(),
     gebaeudeart: document.getElementById("neuArt").value,
+    lage: document.getElementById("neuLage").value,
+    geschosse: Number(document.getElementById("neuGeschosse").value),
     bezirkKennung: gefundenerBezirkFuerNeubau ? gefundenerBezirkFuerNeubau.kennung : "",
     grundstuecksflaeche: Number(document.getElementById("neuGrundstueck").value),
     dachflaeche: Number(document.getElementById("neuDach").value),
@@ -1067,6 +1086,8 @@ function schreibeEntwurf(entwurf) {
   document.getElementById("neuName").value = entwurf.name;
   document.getElementById("neuAdresse").value = entwurf.adresse;
   document.getElementById("neuArt").value = entwurf.gebaeudeart || gebaeudearten[0].kennung;
+  document.getElementById("neuLage").value = entwurf.lage || "stadtquartier";
+  document.getElementById("neuGeschosse").value = entwurf.geschosse;
   document.getElementById("neuGrundstueck").value = entwurf.grundstuecksflaeche;
   document.getElementById("neuDach").value = entwurf.dachflaeche;
   document.getElementById("neuFassade").value = entwurf.fassadenflaeche;
@@ -1091,6 +1112,8 @@ function oeffneNeuformular() {
     name: "",
     adresse: "",
     gebaeudeart: gebaeudearten[0].kennung,
+    lage: "stadtquartier",
+    geschosse: "",
     grundstuecksflaeche: "",
     dachflaeche: "",
     fassadenflaeche: "",
@@ -1483,6 +1506,9 @@ function ladeStand() {
   gespeichert.bauvorhaben.forEach(function (vorhaben) {
     // Bauvorhaben aus der Zeit vor dem Fragebogen haben nur die sieben
     // Reglerwerte. Sie bekommen leere Antworten und werden neu gerechnet.
+    if (!vorhaben.lage) {
+      vorhaben.lage = "stadtquartier";
+    }
     aktualisiereEingabe(vorhaben);
     bauvorhaben.push(vorhaben);
   });
@@ -1523,6 +1549,7 @@ function starte() {
   verbindeKachelliste();
   verbindeDetail();
   fuelleArtAuswahl();
+  fuelleLageAuswahl();
   verbindeNeuformular();
   verbindePass();
   zeichneKarte();

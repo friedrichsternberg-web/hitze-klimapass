@@ -268,22 +268,25 @@ function punkteFuerKategorie(wert, zielwert, maximalPunkte) {
 
 
 // Die Pflichtschwelle. Ein Neubau muss mindestens so viele Punkte erreichen,
-// um freigegeben zu werden.
+// um freigegeben zu werden. Sie hängt an der Lage, die der Bauherr beim
+// Anlegen angibt: je dichter bebaut, desto mehr muss ein Neubau gegen Hitze
+// leisten, weil dort die Wärmeinsel am stärksten ist.
 //
-// Bis zum 13.09.2026 hing sie am Bezirk und stieg mit dessen Hitzebelastung.
-// Diese Belastung war geschätzt und ist raus, damit auf der Seite nichts mehr
-// steht, was nach Messwert aussieht und keiner ist. Ohne sie gibt es keinen
-// Grund, die Anforderung je Bezirk zu staffeln, deshalb gilt für ganz Berlin
-// dieselbe Zahl.
-//
-// Sobald echte Klimadaten vorliegen, etwa aus dem Umweltatlas des Senats, kann
-// die Staffelung zurückkommen. Die Rechnung dafür stand schon und lautete
-// 50 + 5 × (Belastung − 1).
+// Bis zum 13.09.2026 hing sie an einer geschätzten Hitzebelastung je Bezirk.
+// Die war geraten und ist raus. Die Lage ist dagegen eine Angabe des Bauherrn
+// und steht so auf dem Zertifikat. Die drei Stufen sind gesetzte Annahmen.
+const SCHWELLE_NACH_LAGE = {
+  innenstadt: 70,
+  stadtquartier: 60,
+  stadtrand: 55
+};
+
+// Gilt, wenn keine Lage bekannt ist, etwa bei den Kennzahlen je Bezirk.
 const PFLICHTSCHWELLE = 60;
 
 
-function schwelleFuer() {
-  return PFLICHTSCHWELLE;
+function schwelleFuer(lage) {
+  return SCHWELLE_NACH_LAGE[lage] || PFLICHTSCHWELLE;
 }
 
 
@@ -328,7 +331,7 @@ function bewerte(vorhaben) {
     return summe + kategorie.erreichtePunkte;
   }, 0);
 
-  const schwelle = schwelleFuer();
+  const schwelle = schwelleFuer(vorhaben.lage);
 
   return {
     kategorien: bewerteteKategorien,
@@ -573,6 +576,12 @@ function pruefeBauvorhaben(entwurf) {
   }
   if (!entwurf.gebaeudeart) {
     beanstandungen.push("Die Art des Gebäudes fehlt.");
+  }
+  if (!entwurf.lage) {
+    beanstandungen.push("Die Lage fehlt.");
+  }
+  if (!(entwurf.geschosse >= 1)) {
+    beanstandungen.push("Die Zahl der Geschosse muss mindestens eins sein.");
   }
 
   // Alle vier Flächen müssen größer als null sein, und zwar auch die Freifläche.
