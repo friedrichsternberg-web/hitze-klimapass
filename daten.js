@@ -197,7 +197,7 @@ const beispielBauvorhaben = {
   // steht die Maßnahmenliste sofort da, und man sieht am Bogen, welche
   // Antworten das Ergebnis heben.
   antworten: {
-    gestaltung: "gemischt",
+    gruenanteil: 50,
     belag: "pflaster",
     innenhof: true,
     baeume: 4,

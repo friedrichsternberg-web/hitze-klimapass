@@ -28,15 +28,6 @@
 // Die Faktoren sind gesetzte Annahmen für die Demo, keine Messwerte.
 // ---------------------------------------------------------------
 
-// Wie viel der Freifläche unversiegelt ist, je nach Gestaltung.
-const GRUENANTEIL = {
-  "gruen": 1,
-  "ueberwiegend-gruen": 0.75,
-  "gemischt": 0.5,
-  "ueberwiegend-befestigt": 0.25,
-  "befestigt": 0
-};
-
 // Wie viel Wasser der Belag der befestigten Teile noch durchlässt.
 // Asphalt gar nichts, Rasengitter die Hälfte, Kies fast alles.
 const BELAGDURCHLASS = {
@@ -78,7 +69,8 @@ const RUECKHALT_VERSICKERUNG = 0.02;
 // Ausstattung. Dadurch ist ein neues Vorhaben rot und zeigt sofort, was fehlt.
 function leereAntworten() {
   return {
-    gestaltung: "befestigt",
+    // Wie viel Prozent der Freifläche begrünt sind. Der Rest ist befestigt.
+    gruenanteil: 0,
     belag: "asphalt",
     innenhof: false,
     baeume: 0,
@@ -101,7 +93,7 @@ function leereAntworten() {
 // Die unversiegelte Freifläche in Quadratmetern. Der begrünte Teil zählt ganz,
 // vom befestigten Teil zählt, was der Belag durchlässt.
 function unversiegelteFreiflaeche(vorhaben, antworten) {
-  const gruen = GRUENANTEIL[antworten.gestaltung] || 0;
+  const gruen = Math.min(100, Math.max(0, antworten.gruenanteil)) / 100;
   const durchlass = BELAGDURCHLASS[antworten.belag] || 0;
   return vorhaben.freiflaeche * (gruen + (1 - gruen) * durchlass);
 }

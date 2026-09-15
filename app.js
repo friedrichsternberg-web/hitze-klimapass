@@ -292,15 +292,11 @@ const FRAGEBOGEN = [
   {
     titel: "Freifläche",
     fragen: [
-      { kennung: "gestaltung", name: "Gestaltung", art: "auswahl", optionen: [
-        { wert: "gruen", name: "ganz grün" },
-        { wert: "ueberwiegend-gruen", name: "überwiegend grün" },
-        { wert: "gemischt", name: "gemischt" },
-        { wert: "ueberwiegend-befestigt", name: "überwiegend befestigt" },
-        { wert: "befestigt", name: "ganz befestigt" }
-      ] },
-      { kennung: "belag", name: "Belag der befestigten Teile", art: "auswahl",
-        sichtbar: function (a) { return a.gestaltung !== "gruen"; },
+      { kennung: "gruenanteil", name: "Begrünt", art: "schieber",
+        // Aus einem Regler kommen beide Zahlen: was nicht grün ist, ist befestigt.
+        anzeige: function (wert) { return wert + " % grün, " + (100 - wert) + " % befestigt"; } },
+      { kennung: "belag", name: "Bodenbelag", art: "auswahl",
+        sichtbar: function (a) { return a.gruenanteil < 100; },
         optionen: [
           { wert: "asphalt", name: "Asphalt oder Beton" },
           { wert: "pflaster", name: "Pflaster" },
@@ -401,6 +397,16 @@ function zeichneWahlknoepfe(frage, wert) {
 }
 
 
+// Die Zahl neben einem Regler. Meist nur Prozent, manche Fragen bringen eine
+// eigene Beschriftung mit, etwa "60 % grün, 40 % befestigt".
+function beschrifteRegler(frage, wert) {
+  if (frage.anzeige) {
+    return frage.anzeige(wert);
+  }
+  return wert + " %";
+}
+
+
 function zeichneFrage(frage, vorhaben) {
   const antworten = antwortenVon(vorhaben);
   if (frage.sichtbar && !frage.sichtbar(antworten)) {
@@ -413,7 +419,7 @@ function zeichneFrage(frage, vorhaben) {
   let steuerung = "";
 
   if (frage.art === "schieber") {
-    wertanzeige = `<output class="frage-wert" id="wert-${frage.kennung}">${wert} %</output>`;
+    wertanzeige = `<output class="frage-wert" id="wert-${frage.kennung}">${beschrifteRegler(frage, wert)}</output>`;
     steuerung = `<input class="frage-schieber" type="range" data-frage="${frage.kennung}"
                         min="0" max="100" step="5" value="${wert}">`;
   } else if (frage.art === "zahl") {
@@ -613,7 +619,7 @@ function verbindeDetail() {
     uebernimmAntwort(kennung, ereignis.target.value);
     const wertanzeige = document.getElementById("wert-" + kennung);
     if (wertanzeige) {
-      wertanzeige.textContent = antwortenVon(aktuellesVorhaben)[kennung] + " %";
+      wertanzeige.textContent = beschrifteRegler(findeFrage(kennung), antwortenVon(aktuellesVorhaben)[kennung]);
     }
     zeichneErgebnis(aktuellesVorhaben);
     sichereStand();

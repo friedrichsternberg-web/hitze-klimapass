@@ -262,7 +262,7 @@ pruefe("alles befestigt, keine Bäume: Gesamtpunkte", 0,
 // Volle Ausstattung: 1200 m² grüne Freifläche von 3000 m² Grundstück sind
 // 40 % unversiegelt, mehr geht auf diesem Grundstück nicht.
 const beste = Object.assign(leereAntworten(), {
-  gestaltung: "gruen", belag: "kies", innenhof: true, baeume: 12,
+  gruenanteil: 100, belag: "kies", innenhof: true, baeume: 12,
   kronengroesse: "gross", dachbegruenung: 100, dachbegruenungArt: "intensiv",
   dachHell: true, retentionsdach: true, fassadenbegruenung: 100,
   fassadenbegruenungArt: "wandgebunden", fassadeHell: true, zisterne: 100,
@@ -270,6 +270,10 @@ const beste = Object.assign(leereAntworten(), {
 });
 const gut = leiteEingabeAb(bau, beste);
 pruefe("ganz grüne Freifläche: unversiegelt in Prozent des Grundstücks", 40, gut.unversiegelt);
+
+// Halb grün, halb Asphalt: 600 m² von 3000 m² Grundstück sind 20 %.
+const halbGruen = leiteEingabeAb(bau, Object.assign(leereAntworten(), { gruenanteil: 50 }));
+pruefe("halb grün, Rest Asphalt", 20, halbGruen.unversiegelt);
 pruefe("Verschattung gedeckelt bei 100", 100, gut.verschattung);
 pruefe("Dach, Fassade, Belag hell: Stufe 2", 2, gut.helleMaterialien);
 pruefe("zwölf Bäume im Innenhof zählen wie achtzehn", 18, gut.baeume);
