@@ -177,6 +177,10 @@
   --skizze-tuer: #5A4636;
   --skizze-nachbar: #DDD6C8;
   --skizze-mensch: #1B1A17;
+  --skizze-himmel-oben: #EAF2F5;
+  --skizze-himmel-unten: #FBF7EE;
+  --skizze-wolke: #FFFFFF;
+  --skizze-blume: #E8A0B4;
 }
 
 
@@ -1267,7 +1271,7 @@ body {
 .skizze-dach { fill: var(--skizze-dach); }
 .skizze-dach.hell { fill: var(--skizze-dach-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
 .skizze-first { fill: none; stroke: var(--skizze-linie); stroke-width: 1; opacity: 0.5; }
-.skizze-fenster { fill: var(--skizze-fenster); }
+.skizze-fenster { fill: var(--skizze-fenster); stroke: var(--skizze-wand-hell); stroke-width: 0.8; }
 .skizze-fenster.hinten { opacity: 0.6; }
 .skizze-sprosse { stroke: var(--skizze-wand-hell); stroke-width: 1; }
 .skizze-sims { stroke: var(--skizze-linie); stroke-width: 1; opacity: 0.5; }
@@ -1310,6 +1314,25 @@ body {
 .skizze-rohr { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
 .skizze-mulde { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
 .skizze-sicker { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.2; stroke-dasharray: 2 2; }
+
+/* Himmel */
+.skizze-himmel-oben { stop-color: var(--skizze-himmel-oben); }
+.skizze-himmel-unten { stop-color: var(--skizze-himmel-unten); }
+.skizze-wolke { fill: var(--skizze-wolke); opacity: 0.9; }
+.skizze-vogel { fill: none; stroke: var(--skizze-linie); stroke-width: 1; opacity: 0.5; }
+
+/* Feine Gebäudedetails */
+.skizze-band { stroke: var(--skizze-linie); stroke-width: 0.6; opacity: 0.25; }
+.skizze-gesims { stroke: var(--skizze-linie); stroke-width: 1.2; opacity: 0.5; }
+.skizze-schornstein { fill: var(--skizze-dach); }
+.skizze-stufe { fill: var(--skizze-befestigt); }
+.skizze-vordach { stroke: var(--skizze-linie); stroke-width: 1.5; stroke-linecap: round; opacity: 0.6; }
+.skizze-klinke { fill: var(--skizze-sonne); }
+.skizze-glanz { fill: none; stroke: var(--skizze-wolke); stroke-width: 1.5; stroke-linecap: round; opacity: 0.8; }
+.skizze-blume { fill: var(--skizze-blume); }
+.skizze-bank { fill: var(--skizze-holz); }
+.skizze-bankbein { stroke: var(--skizze-holz); stroke-width: 1.2; }
+.skizze-hecke { fill: var(--skizze-blatt-dunkel); opacity: 0.8; }
 
 /* Umgebung und Maßstab */
 .skizze-nachbar { fill: var(--skizze-nachbar); }
