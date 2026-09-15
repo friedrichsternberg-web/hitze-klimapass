@@ -168,6 +168,13 @@
   --skizze-linie: #6E6A61;
   --hoehe-skizze-kachel: 7rem;
   --groesse-ring-mini: 3.5rem;
+  --skizze-sonne: #E9C46A;
+  --skizze-hitze: #D96A3A;
+  --skizze-schatten: rgba(27, 26, 23, 0.22);
+  --skizze-blatt-hell: #7FC08A;
+  --skizze-blatt-dunkel: #3C7F55;
+  --skizze-holz: #8A6A46;
+  --skizze-tuer: #5A4636;
 }
 
 
@@ -1235,7 +1242,8 @@ body {
  * 23. Die Gebäudeskizze
  *
  * Jede Klasse ist ein Bauteil. Die Farben kommen aus den Variablen oben,
- * skizze.js selbst kennt keine Farbe.
+ * skizze.js selbst kennt keine Farbe. Linien haben feste Strichstärken in
+ * Einheiten der Zeichenfläche, wie bei der Karte: sie skalieren mit dem Bild.
  * --------------------------------------------------------------- */
 
 .skizzenrahmen {
@@ -1245,31 +1253,67 @@ body {
   box-shadow: var(--schatten-ruhe);
 }
 
+/* Himmel und Hitze */
+.skizze-sonne { fill: var(--skizze-sonne); }
+.skizze-strahl { stroke: var(--skizze-sonne); stroke-width: 2; stroke-linecap: round; }
+.skizze-hitze { fill: none; stroke: var(--skizze-hitze); stroke-width: 1.3; stroke-linecap: round; opacity: 0.7; }
+
+/* Wände, Dach, Fenster */
 .skizze-wand { fill: var(--skizze-wand); }
 .skizze-wand.hell { fill: var(--skizze-wand-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
 .skizze-wand.hinten { fill: var(--skizze-wand-hinten); }
 .skizze-dach { fill: var(--skizze-dach); }
 .skizze-dach.hell { fill: var(--skizze-dach-hell); stroke: var(--skizze-befestigt); stroke-width: 1; }
+.skizze-first { fill: none; stroke: var(--skizze-linie); stroke-width: 1; opacity: 0.5; }
 .skizze-fenster { fill: var(--skizze-fenster); }
-.skizze-glas { fill: var(--skizze-fenster); opacity: 0.8; }
-.skizze-markise { stroke: var(--skizze-segel); stroke-width: 3; stroke-linecap: round; }
+.skizze-fenster.hinten { opacity: 0.6; }
+.skizze-sprosse { stroke: var(--skizze-wand-hell); stroke-width: 1; }
+.skizze-sims { stroke: var(--skizze-linie); stroke-width: 1; opacity: 0.5; }
+.skizze-balkon { fill: var(--skizze-wand-hell); stroke: var(--skizze-linie); stroke-width: 0.6; }
+.skizze-gelaender { fill: none; stroke: var(--skizze-linie); stroke-width: 0.8; }
+.skizze-tuer { fill: var(--skizze-tuer); }
+.skizze-glas { fill: var(--skizze-fenster); opacity: 0.85; }
+.skizze-markise { fill: var(--skizze-segel); }
+.skizze-markisenkante { fill: var(--skizze-wand-hell); }
 .skizze-saeule { fill: var(--skizze-wand-hell); stroke: var(--skizze-linie); stroke-width: 0.8; }
 .skizze-tor { fill: var(--skizze-dach); }
+.skizze-torlinie { stroke: var(--skizze-wand-hell); stroke-width: 1; opacity: 0.6; }
+
+/* Grün */
 .skizze-gruen { fill: var(--skizze-gruen); }
-.skizze-krone { fill: var(--skizze-gruen); }
+.skizze-gras { fill: none; stroke: var(--skizze-blatt-dunkel); stroke-width: 1; stroke-linecap: round; }
+.skizze-blatt { fill: var(--skizze-blatt-hell); }
+.skizze-blatt.dunkel { fill: var(--skizze-blatt-dunkel); }
+.skizze-blatt.licht { fill: var(--skizze-wand-hell); opacity: 0.45; }
+.skizze-ranke { fill: none; stroke: var(--skizze-blatt-dunkel); stroke-width: 1.4; stroke-linecap: round; }
+.skizze-wandgruen { fill: var(--skizze-gruen); opacity: 0.85; }
+.skizze-polster { fill: none; stroke: var(--skizze-blatt-dunkel); stroke-width: 1.2; }
+.skizze-krone { }
 .skizze-stamm { fill: var(--skizze-stamm); }
+.skizze-ast { stroke: var(--skizze-stamm); stroke-width: 1.5; stroke-linecap: round; }
+.skizze-schatten { fill: var(--skizze-schatten); }
+
+/* Boden und Belag */
 .skizze-befestigt { fill: var(--skizze-befestigt); }
 .skizze-belag-asphalt { fill: var(--skizze-asphalt); }
 .skizze-belag-kies { fill: var(--skizze-kies); }
 .skizze-belag-rasengitter { fill: var(--skizze-befestigt); }
-.skizze-belagpunkt { fill: var(--skizze-linie); opacity: 0.5; }
+.skizze-fuge { stroke: var(--skizze-linie); stroke-width: 0.8; opacity: 0.45; }
+.skizze-korn { fill: var(--skizze-linie); opacity: 0.4; }
 .skizze-bodenlinie { stroke: var(--skizze-linie); stroke-width: 1.5; }
+
+/* Wasser */
 .skizze-wasser { fill: var(--skizze-wasser); }
+.skizze-tank { fill: none; stroke: var(--skizze-linie); stroke-width: 1.2; }
 .skizze-rohr { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
 .skizze-mulde { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.5; }
-.skizze-sicker { stroke: var(--skizze-wasser); stroke-width: 1.5; stroke-dasharray: 2 2; }
+.skizze-sicker { fill: none; stroke: var(--skizze-wasser); stroke-width: 1.2; stroke-dasharray: 2 2; }
+
+/* Pergola und Segel */
 .skizze-segel { fill: var(--skizze-segel); }
-.skizze-mast { stroke: var(--skizze-linie); stroke-width: 1.5; }
+.skizze-mast { stroke: var(--skizze-holz); stroke-width: 2; }
+.skizze-balken { fill: var(--skizze-holz); }
+.skizze-latte { stroke: var(--skizze-holz); stroke-width: 1.2; }
 .skizze-text { fill: var(--farbe-text-leise); font-family: var(--schrift); font-size: 11px; }
 
 
